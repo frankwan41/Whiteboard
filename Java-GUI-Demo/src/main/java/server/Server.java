@@ -84,7 +84,7 @@ public class Server {
 
         if (command.get("command_name").equals("Math"))
         {
-            Math math = new Math();
+            BoardServer math = new BoardServer();
             Integer firstInt = Integer.parseInt(command.get("first_integer").toString());
             Integer secondInt = Integer.parseInt(command.get("second_integer").toString());
 
