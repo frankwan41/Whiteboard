@@ -1,24 +1,27 @@
 package server;
 
+import remote.IRemoteBoard;
+import remote.IRemoteClient;
+
 import java.util.ArrayList;
 
 public class Manager {
 
-    private ArrayList<Client> clientList;
+    private ArrayList<IRemoteClient> clientList;
 
     public void Manager(){
-        this.clientList = new ArrayList<Client>();
+        this.clientList = new ArrayList<IRemoteClient>();
     }
 
-    public void addClient(Client client){
+    public void addClient(IRemoteClient client){
         this.clientList.add(client);
     }
 
-    public ArrayList<Client> getClientList() {
+    public ArrayList<IRemoteClient> getClientList() {
         return clientList;
     }
 
-    public void removeClient(Client client){
+    public void removeClient(IRemoteClient client){
         this.clientList.remove(client);
     }
 
