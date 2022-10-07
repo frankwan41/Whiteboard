@@ -11,31 +11,34 @@ import java.rmi.*;
 
 public interface IRemoteClient extends Remote{
     // create the manager
-    public void createManager() throws RemoteException;
+    void createManager() throws RemoteException;
 
     // get the client username
-    public String getName() throws RemoteException;
+    String getName() throws RemoteException;
 
     // set the client to be the manager
-    public void setManager(String name) throws  RemoteException;
+    void setManager(String name) throws  RemoteException;
 
     // Client need to ask manager for permission to join the room
-    public boolean askJoin() throws  RemoteException;
+    boolean askJoin(String name) throws  RemoteException;
 
     // update clients' peer lists
-    public void updateClientList() throws  RemoteException;
+    void updateClientList() throws  RemoteException;
 
-    // get the current white board state
-    public byte[] getCurrentState() throws  RemoteException;
+    // update self board while other clients did the drawing
+    //void updateBoard(IRemoteMessage message) throws RemoteException;
+
+    // get the current white board state(for client who join the board will get the current board state)
+    byte[] getCurrentBoard() throws  RemoteException;
 
     // invoke when manager "new" the white board, clear all board drawing
-    public void clearBoard() throws  RemoteException;
+    void clearBoard() throws  RemoteException;
 
     // invoke when manager "open" the existing board, all clients should obtain the board state
-    public void updateBoard(byte[] boardState) throws  RemoteException;
+    void updateOpenBoard(byte[] boardState) throws  RemoteException;
 
     // invoke when the manager "close" the board
-    public void closeBoard() throws RemoteException;
+    void closeBoard() throws RemoteException;
 
 
 

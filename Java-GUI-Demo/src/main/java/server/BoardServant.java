@@ -30,7 +30,7 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
         }else{
             // client need to ask manager to join the white board
             try{
-                access = client.askJoin();
+                access = client.askJoin(client.getName());
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -70,10 +70,11 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
     public byte[] currentBoard() throws RemoteException {
         // get the current board state of the manager
         IRemoteClient the_manager = manager.getClientList().get(0);
-        byte[] currentState = the_manager.getCurrentState();
+        byte[] currentState = the_manager.getCurrentBoard();
 
         return currentState;
     }
+
 
 //   @Override
 //    public void broadCast(Message message) throws RemoteException {
@@ -91,7 +92,7 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
     @Override
     public void openBoard(byte[] boardState) throws RemoteException {
         for (IRemoteClient c: manager.getClientList()){
-            c.updateBoard(boardState);
+            c.updateOpenBoard(boardState);
         }
     }
 

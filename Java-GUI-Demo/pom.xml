@@ -50,7 +50,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>client.MainFrame</mainClass>
+                                    <mainClass>client.ClientBoard</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
