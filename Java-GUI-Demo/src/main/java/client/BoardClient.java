@@ -4,6 +4,7 @@
  */
 package client;
 
+import javax.swing.*;
 import java.awt.Color;
 
 /**
@@ -31,17 +32,20 @@ public class BoardClient extends javax.swing.JFrame {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        userListPanel = new javax.swing.JScrollPane();
-        userList = new javax.swing.JList<>();
-        chatBoxPanel = new javax.swing.JScrollPane();
-        chatList = new javax.swing.JList<>();
         boardPanel = new javax.swing.JPanel();
         drawLabel = new javax.swing.JLabel();
         inputPanel = new javax.swing.JScrollPane();
         inputArea = new javax.swing.JTextArea();
+        sendButton = new javax.swing.JButton();
+        clearButton = new javax.swing.JButton();
+        listPanel = new javax.swing.JPanel();
         userListLabel = new javax.swing.JLabel();
+        userListPanel = new javax.swing.JScrollPane();
+        userList = new javax.swing.JList<>();
+        chatPanel = new javax.swing.JPanel();
         chatLabel = new javax.swing.JLabel();
+        chatBoxPanel = new javax.swing.JScrollPane();
+        chatList = new javax.swing.JList<>();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         newBoard = new javax.swing.JMenuItem();
@@ -58,10 +62,51 @@ public class BoardClient extends javax.swing.JFrame {
         drawingMenu = new javax.swing.JMenu();
         cursorMenu = new javax.swing.JMenu();
         currentTool = new javax.swing.JMenu();
-
-        jMenuItem1.setText("jMenuItem1");
+        currentColor = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        boardPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        drawLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        drawLabel.setText("Drawing Section");
+
+        javax.swing.GroupLayout boardPanelLayout = new javax.swing.GroupLayout(boardPanel);
+        boardPanel.setLayout(boardPanelLayout);
+        boardPanelLayout.setHorizontalGroup(
+            boardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(boardPanelLayout.createSequentialGroup()
+                .addComponent(drawLabel)
+                .addGap(0, 341, Short.MAX_VALUE))
+        );
+        boardPanelLayout.setVerticalGroup(
+            boardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(boardPanelLayout.createSequentialGroup()
+                .addComponent(drawLabel)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        inputPanel.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        inputPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        inputArea.setColumns(20);
+        inputArea.setLineWrap(true);
+        inputArea.setRows(5);
+        inputArea.setText("sdfa ijdj ajid ijs ifjaijfij jid fjai fij djalf jad jkfjaijdij kfjijf ad kfiakdj ifka jid akfj ij idkasj da d\n\n\n\nd\nas\nf\ns\nd\na\nf\n");
+        inputPanel.setViewportView(inputArea);
+
+        sendButton.setText("Send");
+
+        clearButton.setText("Clear");
+        clearButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearButtonActionPerformed(evt);
+            }
+        });
+
+        userListLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        userListLabel.setText("Participants");
+        userListLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
         userList.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -70,6 +115,28 @@ public class BoardClient extends javax.swing.JFrame {
         });
         userListPanel.setViewportView(userList);
 
+        javax.swing.GroupLayout listPanelLayout = new javax.swing.GroupLayout(listPanel);
+        listPanel.setLayout(listPanelLayout);
+        listPanelLayout.setHorizontalGroup(
+            listPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(userListPanel)
+            .addGroup(listPanelLayout.createSequentialGroup()
+                .addComponent(userListLabel)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        listPanelLayout.setVerticalGroup(
+            listPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(listPanelLayout.createSequentialGroup()
+                .addComponent(userListLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(userListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        chatLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        chatLabel.setText("Chat");
+        chatLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
         chatList.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
@@ -77,32 +144,23 @@ public class BoardClient extends javax.swing.JFrame {
         });
         chatBoxPanel.setViewportView(chatList);
 
-        drawLabel.setText("Drawing Section");
-
-        javax.swing.GroupLayout boardPanelLayout = new javax.swing.GroupLayout(boardPanel);
-        boardPanel.setLayout(boardPanelLayout);
-        boardPanelLayout.setHorizontalGroup(
-            boardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(boardPanelLayout.createSequentialGroup()
-                .addGap(207, 207, 207)
-                .addComponent(drawLabel)
-                .addContainerGap(243, Short.MAX_VALUE))
+        javax.swing.GroupLayout chatPanelLayout = new javax.swing.GroupLayout(chatPanel);
+        chatPanel.setLayout(chatPanelLayout);
+        chatPanelLayout.setHorizontalGroup(
+            chatPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(chatBoxPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
+            .addGroup(chatPanelLayout.createSequentialGroup()
+                .addComponent(chatLabel)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
-        boardPanelLayout.setVerticalGroup(
-            boardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(boardPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(drawLabel)
+        chatPanelLayout.setVerticalGroup(
+            chatPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(chatPanelLayout.createSequentialGroup()
+                .addComponent(chatLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chatBoxPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        inputArea.setColumns(20);
-        inputArea.setRows(5);
-        inputPanel.setViewportView(inputArea);
-
-        userListLabel.setText("Participants");
-
-        chatLabel.setText("Chat");
 
         menuBar.setMaximumSize(new java.awt.Dimension(200, 30));
         menuBar.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -211,8 +269,17 @@ public class BoardClient extends javax.swing.JFrame {
         cursorMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/cursor.png")); // NOI18N
         menuBar.add(cursorMenu);
 
+        currentTool.setBackground(java.awt.Color.lightGray);
+        currentTool.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         currentTool.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/cursor.png")); // NOI18N
+        currentTool.setOpaque(true);
         menuBar.add(currentTool);
+
+        currentColor.setBackground(java.awt.Color.lightGray);
+        currentColor.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        currentColor.setText("current color");
+        currentColor.setOpaque(true);
+        menuBar.add(currentColor);
 
         setJMenuBar(menuBar);
 
@@ -222,41 +289,40 @@ public class BoardClient extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(boardPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(boardPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(userListPanel, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(chatBoxPanel, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(inputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 45, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(chatLabel)
-                                .addGap(107, 107, 107))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(userListLabel)
-                                .addGap(88, 88, 88))))))
+                        .addComponent(sendButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(clearButton)
+                        .addGap(27, 27, 27))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(inputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(listPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(chatPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(userListLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(userListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(chatLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(chatBoxPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(inputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 6, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(boardPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())))
+                .addComponent(boardPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(listPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chatPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(inputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(sendButton)
+                    .addComponent(clearButton)))
         );
 
         pack();
@@ -292,6 +358,10 @@ public class BoardClient extends javax.swing.JFrame {
     private void drawCirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawCirActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_drawCirActionPerformed
+
+    private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_clearButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -334,7 +404,10 @@ public class BoardClient extends javax.swing.JFrame {
     private javax.swing.JScrollPane chatBoxPanel;
     private javax.swing.JLabel chatLabel;
     private javax.swing.JList<String> chatList;
+    private javax.swing.JPanel chatPanel;
+    private javax.swing.JButton clearButton;
     private javax.swing.JMenu colorMenu;
+    private javax.swing.JMenu currentColor;
     private javax.swing.JMenu currentTool;
     private javax.swing.JMenu cursorMenu;
     private javax.swing.JRadioButtonMenuItem drawCir;
@@ -349,9 +422,10 @@ public class BoardClient extends javax.swing.JFrame {
     private javax.swing.JMenuItem fileSaveAs;
     private javax.swing.JTextArea inputArea;
     private javax.swing.JScrollPane inputPanel;
-    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JPanel listPanel;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem newBoard;
+    private javax.swing.JButton sendButton;
     private javax.swing.JMenu shapeMenu;
     private javax.swing.JMenu textMenu;
     private javax.swing.JList<String> userList;
