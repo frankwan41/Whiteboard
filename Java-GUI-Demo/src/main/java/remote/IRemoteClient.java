@@ -1,6 +1,7 @@
 package remote;
 
 import java.rmi.*;
+import java.util.ArrayList;
 
 /** RMI Remote interface - must be shared between client and server.
  * All methods must throw RemoteException.
@@ -23,7 +24,7 @@ public interface IRemoteClient extends Remote{
     boolean askJoin(String name) throws  RemoteException;
 
     // update clients' peer lists
-    void updateClientList() throws  RemoteException;
+    void updateClientList(ArrayList<IRemoteClient> clients) throws  RemoteException;
 
     // update self board while other clients did the drawing
     //void updateBoard(IRemoteMessage message) throws RemoteException;
@@ -40,6 +41,6 @@ public interface IRemoteClient extends Remote{
     // invoke when the manager "close" the board
     void closeBoard() throws RemoteException;
 
-
+    boolean isManager() throws RemoteException;
 
 }

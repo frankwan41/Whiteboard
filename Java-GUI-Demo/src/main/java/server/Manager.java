@@ -14,7 +14,9 @@ public class Manager {
     }
 
     public void addClient(IRemoteClient client){
+        System.out.println("here");
         this.clientList.add(client);
+        System.out.println("all");
     }
 
     public ArrayList<IRemoteClient> getClientList() {

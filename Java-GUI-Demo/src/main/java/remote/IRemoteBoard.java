@@ -14,7 +14,7 @@ public interface IRemoteBoard extends Remote{
     // For joined clients
 
     // client join the white board with unique username
-    void joinBoard(IRemoteClient client) throws RemoteException;
+    void joinBoard(IRemoteClient client, String name) throws RemoteException;
 
     // client exit and broadcast to all clients and refresh clients list
     void exitBoard(IRemoteClient client) throws RemoteException;
@@ -41,6 +41,7 @@ public interface IRemoteBoard extends Remote{
     // Kick out a certain user
     void kickUser(String userName) throws RemoteException;
 
-
+    // check identical name
+    boolean checkName(String name) throws RemoteException;
 
 }

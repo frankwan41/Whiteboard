@@ -19,14 +19,21 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
         this.manager = new Manager();
     }
 
-
+    /**
+     * client joins the board
+     * @param client client remote class
+     * @throws RemoteException
+     */
     @Override
-    public void joinBoard(IRemoteClient client) throws RemoteException {
+    public void joinBoard(IRemoteClient client, String name) throws RemoteException {
         boolean access = false;
-        if(this.manager == null){
-            // make the first client being the manager
-            client.createManager();
-            client.setManager(client.getName() + "(manager)");
+        if(this.manager.getClientList() == null){
+            // make the first client being the manager and add to the client list
+
+            //client.createManager();
+            client.setManager(name + "(manager)");
+            this.manager.addClient(client);
+            System.out.println("pass");
         }else{
             // client need to ask manager to join the white board
             try{
@@ -36,12 +43,14 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
             }
         }
 
+        // check if access is granted
         if(access) {
             manager.addClient(client);
         }
 
+        // update client's client list
         for (IRemoteClient c: manager.getClientList()){
-            c.updateClientList();
+            c.updateClientList(manager.getClientList());
         }
 
 
@@ -56,7 +65,7 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
             }
         }
         for(IRemoteClient c: manager.getClientList()){
-            c.updateClientList();
+            c.updateClientList(manager.getClientList());
         }
 
     }
@@ -118,4 +127,22 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
 
     }
 
+    /**
+     * check if the client list already has identical name
+     * @param name name for input client
+     * @return true if the list has the same name
+     * @throws RemoteException
+     */
+    @Override
+    public boolean checkName(String name) throws RemoteException {
+        if(manager.getClientList() == null){
+            return false;
+        }
+        for(IRemoteClient client:manager.getClientList()){
+            if(name.equals(client.getName())){
+                return true;
+            }
+        }
+        return false;
+    }
 }
