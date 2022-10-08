@@ -11,8 +11,8 @@ import java.util.ArrayList;
  */
 
 public interface IRemoteClient extends Remote{
-    // create the manager
-    void createManager() throws RemoteException;
+    // set the client information
+    void setClient(String name) throws RemoteException;
 
     // get the client username
     String getName() throws RemoteException;

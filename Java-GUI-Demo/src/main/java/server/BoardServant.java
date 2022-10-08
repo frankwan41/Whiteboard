@@ -29,23 +29,25 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
         boolean access = false;
         if(this.manager.getClientList() == null){
             // make the first client being the manager and add to the client list
-
-            //client.createManager();
             client.setManager(name + "(manager)");
             this.manager.addClient(client);
             System.out.println("pass");
         }else{
             // client need to ask manager to join the white board
             try{
-                access = client.askJoin(client.getName());
+                client.setClient(name);
+                access = manager.askJoin(client.getName());
+
+                // check if access is granted
+                if(access) {
+                    manager.addClient(client);
+                }else {
+                    client.closeBoard();
+                    return;
+                }
             }catch (Exception e){
                 e.printStackTrace();
             }
-        }
-
-        // check if access is granted
-        if(access) {
-            manager.addClient(client);
         }
 
         // update client's client list
