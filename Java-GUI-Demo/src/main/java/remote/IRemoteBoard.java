@@ -1,5 +1,6 @@
 package remote;
 
+import java.awt.*;
 import java.rmi.*;
 import java.util.ArrayList;
 
@@ -44,4 +45,6 @@ public interface IRemoteBoard extends Remote{
     // check identical name
     boolean checkName(String name) throws RemoteException;
 
+    // update client's whiteboard
+    void drawLine(String mode, Point start, Point end) throws RemoteException;
 }

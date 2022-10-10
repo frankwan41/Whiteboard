@@ -4,8 +4,11 @@
  */
 package client;
 
+import remote.IRemoteBoard;
+
 import javax.swing.*;
-import java.awt.Color;
+import java.awt.*;
+import java.rmi.RemoteException;
 
 /**
  *
@@ -13,11 +16,18 @@ import java.awt.Color;
  */
 public class BoardClient extends javax.swing.JFrame {
     
-
+    private String mode;
+    private Point start;
+    private Point end;
+    private IRemoteBoard remoteBoard;
     /**
      * Creates new form BoardClient
      */
-    public BoardClient() {
+    public BoardClient(IRemoteBoard remoteBoard) {
+        this.remoteBoard = remoteBoard;
+        mode = "";
+        start = new Point(0, 0);
+        end = new Point(0, 0);
         initComponents();
     }
 
@@ -66,6 +76,23 @@ public class BoardClient extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         boardPanel.setBackground(new java.awt.Color(255, 255, 255));
+        boardPanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                boardPanelMouseDragged(evt);
+            }
+        });
+        boardPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                boardPanelMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                try {
+                    boardPanelMouseReleased(evt);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
         drawLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         drawLabel.setText("Drawing Section");
@@ -165,11 +192,9 @@ public class BoardClient extends javax.swing.JFrame {
         menuBar.setMinimumSize(new java.awt.Dimension(20, 20));
         menuBar.setPreferredSize(new java.awt.Dimension(300, 27));
 
-        fileMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/folder.png")); // NOI18N
         fileMenu.setText("File");
 
         newBoard.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        newBoard.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/newboard.png")); // NOI18N
         newBoard.setText("New Board");
         newBoard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -179,7 +204,6 @@ public class BoardClient extends javax.swing.JFrame {
         fileMenu.add(newBoard);
 
         fileSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        fileSave.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/save.png")); // NOI18N
         fileSave.setText("Save");
         fileSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -189,7 +213,6 @@ public class BoardClient extends javax.swing.JFrame {
         fileMenu.add(fileSave);
 
         fileSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        fileSaveAs.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/saveas.png")); // NOI18N
         fileSaveAs.setText("Save As");
         fileSaveAs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -199,7 +222,6 @@ public class BoardClient extends javax.swing.JFrame {
         fileMenu.add(fileSaveAs);
 
         fileClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        fileClose.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/close.png")); // NOI18N
         fileClose.setText("Close Board");
         fileClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -210,7 +232,6 @@ public class BoardClient extends javax.swing.JFrame {
 
         menuBar.add(fileMenu);
 
-        shapeMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/shape.png")); // NOI18N
         shapeMenu.setText("Shape");
         shapeMenu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -221,7 +242,6 @@ public class BoardClient extends javax.swing.JFrame {
         drawLine.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         buttonGroup1.add(drawLine);
         drawLine.setText("Line");
-        drawLine.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/line.png")); // NOI18N
         drawLine.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 drawLineActionPerformed(evt);
@@ -232,19 +252,16 @@ public class BoardClient extends javax.swing.JFrame {
         drawRect.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         buttonGroup1.add(drawRect);
         drawRect.setText("Rectangle");
-        drawRect.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/rectangle.png")); // NOI18N
         shapeMenu.add(drawRect);
 
         drawTri.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         buttonGroup1.add(drawTri);
         drawTri.setText("Triangle");
-        drawTri.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/triangle.png")); // NOI18N
         shapeMenu.add(drawTri);
 
         drawCir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         buttonGroup1.add(drawCir);
         drawCir.setText("Circle");
-        drawCir.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/circle.png")); // NOI18N
         drawCir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 drawCirActionPerformed(evt);
@@ -254,23 +271,16 @@ public class BoardClient extends javax.swing.JFrame {
 
         menuBar.add(shapeMenu);
 
-        colorMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/color.png")); // NOI18N
         colorMenu.setText("Color");
         menuBar.add(colorMenu);
 
-        textMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/text.png")); // NOI18N
         textMenu.setText("Text");
         menuBar.add(textMenu);
-
-        drawingMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/freedraw.png")); // NOI18N
         menuBar.add(drawingMenu);
-
-        cursorMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/cursor.png")); // NOI18N
         menuBar.add(cursorMenu);
 
         currentTool.setBackground(java.awt.Color.lightGray);
         currentTool.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        currentTool.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/cursor.png")); // NOI18N
         currentTool.setOpaque(true);
         menuBar.add(currentTool);
 
@@ -352,7 +362,8 @@ public class BoardClient extends javax.swing.JFrame {
 
     private void drawLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawLineActionPerformed
         // TODO add your handling code here:
-        
+        mode = "freeDraw";
+        System.out.println(mode+"mode is ");
     }//GEN-LAST:event_drawLineActionPerformed
 
     private void drawCirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawCirActionPerformed
@@ -363,6 +374,50 @@ public class BoardClient extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_clearButtonActionPerformed
 
+    private void boardPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boardPanelMousePressed
+        // TODO add your handling code here:
+        start.setLocation(evt.getX(), evt.getY());
+        System.out.println(start+"start is ");
+    }//GEN-LAST:event_boardPanelMousePressed
+
+    private void boardPanelMouseReleased(java.awt.event.MouseEvent evt) throws RemoteException {//GEN-FIRST:event_boardPanelMouseReleased
+        // TODO add your handling code here:
+        repaint();
+        remoteBoard.drawLine(mode, start, end);
+    }//GEN-LAST:event_boardPanelMouseReleased
+
+    private void boardPanelMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boardPanelMouseDragged
+        // TODO add your handling code here:
+        end.setLocation(evt.getX(), evt.getY());
+        System.out.println(end+"end is ");
+    }//GEN-LAST:event_boardPanelMouseDragged
+
+    /**
+     * paint the whiteboard
+     * @param g graphics
+     */
+    @Override
+    public void paint(Graphics g) {
+        System.out.println("enter");
+        //super.paint(g);
+        Graphics2D g2d = (Graphics2D) g;
+        if(mode.equals("freeDraw")){
+            g2d.drawLine((int)start.getX(), (int)start.getY(), (int)end.getX(), (int)end.getY());
+            System.out.println("draw successful");
+        }
+    }
+
+    public void setStart(Point coord){
+        start = coord;
+    }
+
+    public void setEnd(Point coord){
+        end = coord;
+    }
+
+    public void setMode(String mode){
+        this.mode = mode;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel boardPanel;

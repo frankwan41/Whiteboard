@@ -3,6 +3,7 @@ package server;
 import remote.IRemoteBoard;
 import remote.IRemoteClient;
 
+import java.awt.*;
 import java.rmi.*;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -146,5 +147,12 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
             }
         }
         return false;
+    }
+
+    @Override
+    public void drawLine(String mode, Point start, Point end) throws RemoteException {
+        for(IRemoteClient client: manager.getClientList()){
+            client.drawLine(mode, start, end);
+        }
     }
 }

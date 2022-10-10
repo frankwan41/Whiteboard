@@ -1,5 +1,6 @@
 package remote;
 
+import java.awt.*;
 import java.rmi.*;
 import java.util.ArrayList;
 
@@ -41,6 +42,9 @@ public interface IRemoteClient extends Remote{
     // invoke when the manager "close" the board
     void closeBoard() throws RemoteException;
 
+    // check if client is a manager
     boolean isManager() throws RemoteException;
 
+    // ask client to draw line
+    void drawLine(String mode, Point start, Point end) throws RemoteException;
 }

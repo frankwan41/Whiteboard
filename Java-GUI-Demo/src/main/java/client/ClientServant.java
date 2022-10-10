@@ -8,6 +8,7 @@ import remote.IRemoteBoard;
 import remote.IRemoteClient;
 
 import javax.swing.*;
+import java.awt.*;
 import java.rmi.AccessException;
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
@@ -28,11 +29,7 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
     private boolean isManager;
     private ArrayList<IRemoteClient> clientList;
 
-    public ClientServant() throws RemoteException {
-        /* Create and display the form */
-        board = new BoardClient();
-        board.setVisible(true);
-        board.setSize(500,500);
+    public ClientServant() throws RemoteException, NullPointerException {
         this.name = "";
         this.isManager = false;
     }
@@ -61,6 +58,7 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
                 }else{
                     // add client to the server list
                     remoteBoard.joinBoard(remoteClient, name);
+                    createBoard(remoteBoard);
                 }
 
             }
@@ -84,6 +82,13 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
 
     }
 
+
+    public static void createBoard(IRemoteBoard remoteBoard){
+        /* Create and display the form */
+        board = new BoardClient(remoteBoard);
+        board.setVisible(true);
+        board.setSize(500,500);
+    }
 
     /**
      * set client name
@@ -171,9 +176,29 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
         t.start();
     }
 
+    /**
+     * check if this client is a manager
+     * @return true if manager
+     * @throws RemoteException
+     */
     @Override
     public boolean isManager() throws RemoteException {
         return this.isManager;
     }
 
+    /**
+     * remote server asks client to draw line
+     * @param mode draw option
+     * @param start start point
+     * @param end end point
+     * @throws RemoteException
+     */
+    @Override
+    public void drawLine(String mode, Point start, Point end) throws RemoteException {
+        board.setMode(mode);
+        board.setStart(start);
+        board.setEnd(end);
+        Graphics g = board.getGraphics();
+        board.paint(g);
+    }
 }
