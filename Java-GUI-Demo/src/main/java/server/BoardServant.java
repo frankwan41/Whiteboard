@@ -87,12 +87,6 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
         return currentState;
     }
 
-
-//   @Override
-//    public void broadCast(Message message) throws RemoteException {
-//
-//    }
-
     @Override
     public void newBoard() throws RemoteException {
         for (IRemoteClient c: manager.getClientList()){
@@ -149,10 +143,21 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
         return false;
     }
 
+    /**
+     * draw different shapes according to different modes
+     * @param mode shape name
+     * @param start start location of mouse
+     * @param end end location of mouse
+     * @throws RemoteException
+     */
     @Override
-    public void drawLine(String mode, Point start, Point end) throws RemoteException {
+    public void draw(String name, String mode, Point start, Point end) throws RemoteException {
         for(IRemoteClient client: manager.getClientList()){
-            client.drawLine(mode, start, end);
+            if(!client.getName().equals(name)){
+                System.out.println(client.getName()+"  hhh "+name);
+                client.draw(mode, start, end);
+            }
         }
     }
+
 }

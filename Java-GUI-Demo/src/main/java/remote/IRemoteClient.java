@@ -45,6 +45,6 @@ public interface IRemoteClient extends Remote{
     // check if client is a manager
     boolean isManager() throws RemoteException;
 
-    // ask client to draw line
-    void drawLine(String mode, Point start, Point end) throws RemoteException;
+    // ask client to draw shapes
+    void draw(String mode, Point start, Point end) throws RemoteException;
 }

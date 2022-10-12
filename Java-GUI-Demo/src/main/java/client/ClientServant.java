@@ -58,7 +58,8 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
                 }else{
                     // add client to the server list
                     remoteBoard.joinBoard(remoteClient, name);
-                    createBoard(remoteBoard);
+                    // create board
+                    createBoard(remoteBoard, name);
                 }
 
             }
@@ -83,9 +84,9 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
     }
 
 
-    public static void createBoard(IRemoteBoard remoteBoard){
+    public static void createBoard(IRemoteBoard remoteBoard, String name){
         /* Create and display the form */
-        board = new BoardClient(remoteBoard);
+        board = new BoardClient(remoteBoard, name);
         board.setVisible(true);
         board.setSize(500,500);
     }
@@ -187,18 +188,24 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
     }
 
     /**
-     * remote server asks client to draw line
-     * @param mode draw option
+     * remote server asks client to draw different shapes
+     * @param mode shapes
      * @param start start point
      * @param end end point
      * @throws RemoteException
      */
     @Override
-    public void drawLine(String mode, Point start, Point end) throws RemoteException {
-        board.setMode(mode);
-        board.setStart(start);
-        board.setEnd(end);
-        Graphics g = board.getGraphics();
-        board.paint(g);
+    public void draw(String mode, Point start, Point end) throws RemoteException {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                board.setMode(mode);
+                board.setStart(start);
+                board.setEnd(end);
+                Graphics g = board.getBoardPanel().getGraphics();
+                board.paint(g);
+            }
+        });
+        t.start();
     }
 }

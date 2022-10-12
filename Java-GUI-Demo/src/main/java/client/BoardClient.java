@@ -15,19 +15,28 @@ import java.rmi.RemoteException;
  * @author ycw
  */
 public class BoardClient extends javax.swing.JFrame {
-    
+
     private String mode;
     private Point start;
     private Point end;
     private IRemoteBoard remoteBoard;
+    public final String DRAWLINE = "drawLine";
+    public final String FREEDRAW = "freeDraw";
+    public final String DRAWREC = "drawRec";
+    public final String DRAWCIRCLE = "drawCircle";
+    public final String DRAWTRI = "drawTri";
+    private String name;
+    Graphics g;
+
     /**
      * Creates new form BoardClient
      */
-    public BoardClient(IRemoteBoard remoteBoard) {
+    public BoardClient(IRemoteBoard remoteBoard, String name) {
         this.remoteBoard = remoteBoard;
-        mode = "";
+        mode = "freeDraw";
         start = new Point(0, 0);
         end = new Point(0, 0);
+        this.name = name;
         initComponents();
     }
 
@@ -78,7 +87,11 @@ public class BoardClient extends javax.swing.JFrame {
         boardPanel.setBackground(new java.awt.Color(255, 255, 255));
         boardPanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {
-                boardPanelMouseDragged(evt);
+                try {
+                    boardPanelMouseDragged(evt);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
         boardPanel.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -362,12 +375,14 @@ public class BoardClient extends javax.swing.JFrame {
 
     private void drawLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawLineActionPerformed
         // TODO add your handling code here:
-        mode = "freeDraw";
-        System.out.println(mode+"mode is ");
+        mode = DRAWLINE;
+        System.out.println("mode is "+mode);
     }//GEN-LAST:event_drawLineActionPerformed
 
     private void drawCirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawCirActionPerformed
         // TODO add your handling code here:
+        mode = DRAWCIRCLE;
+        System.out.println("mode is "+mode);
     }//GEN-LAST:event_drawCirActionPerformed
 
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
@@ -377,19 +392,40 @@ public class BoardClient extends javax.swing.JFrame {
     private void boardPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boardPanelMousePressed
         // TODO add your handling code here:
         start.setLocation(evt.getX(), evt.getY());
-        System.out.println(start+"start is ");
+        System.out.println("location0"+start+"  "+end);
     }//GEN-LAST:event_boardPanelMousePressed
 
     private void boardPanelMouseReleased(java.awt.event.MouseEvent evt) throws RemoteException {//GEN-FIRST:event_boardPanelMouseReleased
         // TODO add your handling code here:
-        repaint();
-        remoteBoard.drawLine(mode, start, end);
+        g = boardPanel.getGraphics();
+        paint(g);
+        remoteBoard.draw(name, mode, start, end);
+        start.setLocation(0, 0);
+        end.setLocation(0, 0);
+        System.out.println(end+"      no change");
+
     }//GEN-LAST:event_boardPanelMouseReleased
 
-    private void boardPanelMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boardPanelMouseDragged
+    private void boardPanelMouseDragged(java.awt.event.MouseEvent evt) throws RemoteException {//GEN-FIRST:event_boardPanelMouseDragged
         // TODO add your handling code here:
-        end.setLocation(evt.getX(), evt.getY());
-        System.out.println(end+"end is ");
+        g = boardPanel.getGraphics();
+        if(mode.equals(FREEDRAW)){
+            end.setLocation(evt.getX(), evt.getY());
+            paint(g);
+            remoteBoard.draw(name, mode, start, end);
+            start = end;
+        }else if(mode.equals(DRAWLINE)|| mode.equals(DRAWREC) || mode.equals(DRAWTRI) || mode.equals(DRAWCIRCLE)){
+            System.out.println("location"+start+"  "+end);
+            if(end.x != 0 &&  end.y != 0){
+                g.setXORMode(boardPanel.getBackground());
+                System.out.println("location2"+start+"  "+end);
+                paint(g);
+            }
+            System.out.println("location3"+start+"  "+end);
+            end.setLocation(evt.getX(), evt.getY());
+            paint(g);
+        }
+
     }//GEN-LAST:event_boardPanelMouseDragged
 
     /**
@@ -399,11 +435,21 @@ public class BoardClient extends javax.swing.JFrame {
     @Override
     public void paint(Graphics g) {
         System.out.println("enter");
-        //super.paint(g);
-        Graphics2D g2d = (Graphics2D) g;
-        if(mode.equals("freeDraw")){
-            g2d.drawLine((int)start.getX(), (int)start.getY(), (int)end.getX(), (int)end.getY());
+        if(mode.equals(FREEDRAW)){
+            g.drawLine(start.x, start.y, end.x, end.y);
             System.out.println("draw successful");
+        }else if(mode.equals(DRAWLINE)){
+            g.drawLine(start.x, start.y, end.x, end.y);
+            System.out.println("draw line successful");
+        }else if(mode.equals(DRAWREC)){
+            g.drawRect(startPoint().x, startPoint().y, Math.abs(start.x - end.x), Math.abs(start.y - end.y));
+            System.out.println("draw rectangle successful");
+        }else if(mode.equals(DRAWCIRCLE)){
+            g.drawOval(startPoint().x, startPoint().y, Math.abs(start.x - end.x), Math.abs(start.y - end.y));
+            System.out.println("draw circle successful");
+        }else if(mode.equals(DRAWTRI)){
+            g.drawOval(start.x, start.y, Math.abs(start.x - end.x), Math.abs(start.y - end.y));
+            System.out.println("draw circle successful");
         }
     }
 
@@ -418,6 +464,18 @@ public class BoardClient extends javax.swing.JFrame {
     public void setMode(String mode){
         this.mode = mode;
     }
+
+    public JPanel getBoardPanel() {
+        return boardPanel;
+    }
+
+    public Point startPoint(){
+        Point startPoint = new Point();
+        startPoint.x = Math.min(start.x, end.x);
+        startPoint.y = Math.min(start.y, end.y);
+        return startPoint;
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel boardPanel;
