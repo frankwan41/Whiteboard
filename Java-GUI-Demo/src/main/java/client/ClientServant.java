@@ -27,7 +27,7 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
     private static BoardClient board;
     private String name;
     private boolean isManager;
-    private ArrayList<IRemoteClient> clientList;
+    private ArrayList<String> clientList;
 
     public ClientServant() throws RemoteException, NullPointerException {
         this.name = "";
@@ -56,10 +56,15 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
                     JOptionPane.showMessageDialog(null,"Can't use identical name!", "Warning!", JOptionPane.WARNING_MESSAGE);
                     System.exit(0);
                 }else{
+                    // create board
+                    if(remoteBoard.isEmpty()){
+                        createBoard(remoteBoard, name+"(manager)");
+                    }else {
+                        createBoard(remoteBoard, name);
+                    }
+
                     // add client to the server list
                     remoteBoard.joinBoard(remoteClient, name);
-                    // create board
-                    createBoard(remoteBoard, name);
                 }
 
             }
@@ -144,8 +149,9 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
      * @throws RemoteException
      */
     @Override
-    public void updateClientList(ArrayList<IRemoteClient> clients) throws RemoteException {
+    public void updateClientList(ArrayList<String> clients) throws RemoteException {
         clientList = clients;
+        board.updateList(clients);
         System.out.println(clientList.size());
     }
 
@@ -195,15 +201,13 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
      * @throws RemoteException
      */
     @Override
-    public void draw(String mode, Point start, Point end) throws RemoteException {
+    public void draw(String mode, Point start, Point end, Color color) throws RemoteException {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                board.setMode(mode);
-                board.setStart(start);
-                board.setEnd(end);
+                System.out.println(name);
                 Graphics g = board.getBoardPanel().getGraphics();
-                board.paint(g);
+                board.remoteDraw(g, mode, start, end, color);
             }
         });
         t.start();

@@ -5,10 +5,12 @@
 package client;
 
 import remote.IRemoteBoard;
+import remote.IRemoteClient;
 
 import javax.swing.*;
 import java.awt.*;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 /**
  *
@@ -19,6 +21,9 @@ public class BoardClient extends javax.swing.JFrame {
     private String mode;
     private Point start;
     private Point end;
+    private Point remoteStart;
+    private Point remoteEnd;
+    private String remoteMode;
     private IRemoteBoard remoteBoard;
     public final String DRAWLINE = "drawLine";
     public final String FREEDRAW = "freeDraw";
@@ -26,6 +31,9 @@ public class BoardClient extends javax.swing.JFrame {
     public final String DRAWCIRCLE = "drawCircle";
     public final String DRAWTRI = "drawTri";
     private String name;
+    private Color color;
+    private Color remoteColor;
+    private ArrayList<String> clientNames;
     Graphics g;
 
     /**
@@ -34,9 +42,14 @@ public class BoardClient extends javax.swing.JFrame {
     public BoardClient(IRemoteBoard remoteBoard, String name) {
         this.remoteBoard = remoteBoard;
         mode = "freeDraw";
+        remoteStart = new Point(0, 0);
+        remoteEnd = new Point(0, 0);
         start = new Point(0, 0);
         end = new Point(0, 0);
         this.name = name;
+        userList = new JList<>();
+        color = new Color(51, 213, 51);
+        remoteColor = new Color(0x000000);
         initComponents();
     }
 
@@ -76,7 +89,9 @@ public class BoardClient extends javax.swing.JFrame {
         drawTri = new javax.swing.JRadioButtonMenuItem();
         drawCir = new javax.swing.JRadioButtonMenuItem();
         colorMenu = new javax.swing.JMenu();
+        colorChooser = new javax.swing.JMenuItem();
         textMenu = new javax.swing.JMenu();
+        drawText = new javax.swing.JMenuItem();
         drawingMenu = new javax.swing.JMenu();
         cursorMenu = new javax.swing.JMenu();
         currentTool = new javax.swing.JMenu();
@@ -135,6 +150,11 @@ public class BoardClient extends javax.swing.JFrame {
         inputPanel.setViewportView(inputArea);
 
         sendButton.setText("Send");
+        sendButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sendButtonActionPerformed(evt);
+            }
+        });
 
         clearButton.setText("Clear");
         clearButton.addActionListener(new java.awt.event.ActionListener() {
@@ -151,6 +171,11 @@ public class BoardClient extends javax.swing.JFrame {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
+        });
+        userList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                userListMouseClicked(evt);
+            }
         });
         userListPanel.setViewportView(userList);
 
@@ -265,11 +290,21 @@ public class BoardClient extends javax.swing.JFrame {
         drawRect.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         buttonGroup1.add(drawRect);
         drawRect.setText("Rectangle");
+        drawRect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                drawRectActionPerformed(evt);
+            }
+        });
         shapeMenu.add(drawRect);
 
         drawTri.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         buttonGroup1.add(drawTri);
         drawTri.setText("Triangle");
+        drawTri.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                drawTriActionPerformed(evt);
+            }
+        });
         shapeMenu.add(drawTri);
 
         drawCir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_DOWN_MASK));
@@ -285,9 +320,32 @@ public class BoardClient extends javax.swing.JFrame {
         menuBar.add(shapeMenu);
 
         colorMenu.setText("Color");
+
+        colorChooser.setText("Choose");
+        colorChooser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                colorChooserActionPerformed(evt);
+            }
+        });
+        colorMenu.add(colorChooser);
+
         menuBar.add(colorMenu);
 
         textMenu.setText("Text");
+        textMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textMenuActionPerformed(evt);
+            }
+        });
+
+        drawText.setText("drawText");
+        drawText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                drawTextActionPerformed(evt);
+            }
+        });
+        textMenu.add(drawText);
+
         menuBar.add(textMenu);
         menuBar.add(drawingMenu);
         menuBar.add(cursorMenu);
@@ -376,7 +434,10 @@ public class BoardClient extends javax.swing.JFrame {
     private void drawLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawLineActionPerformed
         // TODO add your handling code here:
         mode = DRAWLINE;
+        start.setLocation(0, 0);
+        end.setLocation(0, 0);
         System.out.println("mode is "+mode);
+        System.out.println(start+"end is "+end);
     }//GEN-LAST:event_drawLineActionPerformed
 
     private void drawCirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawCirActionPerformed
@@ -392,17 +453,18 @@ public class BoardClient extends javax.swing.JFrame {
     private void boardPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boardPanelMousePressed
         // TODO add your handling code here:
         start.setLocation(evt.getX(), evt.getY());
-        System.out.println("location0"+start+"  "+end);
+        //end.setLocation(0, 0);
+        System.out.println("location0"+start+"  "+end+"evt"+evt.getX()+" "+evt.getY());
     }//GEN-LAST:event_boardPanelMousePressed
 
     private void boardPanelMouseReleased(java.awt.event.MouseEvent evt) throws RemoteException {//GEN-FIRST:event_boardPanelMouseReleased
         // TODO add your handling code here:
         g = boardPanel.getGraphics();
         paint(g);
-        remoteBoard.draw(name, mode, start, end);
+        remoteBoard.draw(name, mode, start, end, color);
         start.setLocation(0, 0);
         end.setLocation(0, 0);
-        System.out.println(end+"      no change");
+
 
     }//GEN-LAST:event_boardPanelMouseReleased
 
@@ -412,21 +474,51 @@ public class BoardClient extends javax.swing.JFrame {
         if(mode.equals(FREEDRAW)){
             end.setLocation(evt.getX(), evt.getY());
             paint(g);
-            remoteBoard.draw(name, mode, start, end);
+            remoteBoard.draw(name, mode, start, end, color);
             start = end;
         }else if(mode.equals(DRAWLINE)|| mode.equals(DRAWREC) || mode.equals(DRAWTRI) || mode.equals(DRAWCIRCLE)){
-            System.out.println("location"+start+"  "+end);
             if(end.x != 0 &&  end.y != 0){
                 g.setXORMode(boardPanel.getBackground());
-                System.out.println("location2"+start+"  "+end);
                 paint(g);
             }
-            System.out.println("location3"+start+"  "+end);
             end.setLocation(evt.getX(), evt.getY());
             paint(g);
         }
 
     }//GEN-LAST:event_boardPanelMouseDragged
+
+    private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_sendButtonActionPerformed
+
+    private void drawRectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawRectActionPerformed
+        // TODO add your handling code here:
+        mode = DRAWREC;
+    }//GEN-LAST:event_drawRectActionPerformed
+
+    private void drawTriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawTriActionPerformed
+        // TODO add your handling code here:
+        mode = DRAWTRI;
+    }//GEN-LAST:event_drawTriActionPerformed
+
+    private void textMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textMenuActionPerformed
+        // TODO add your handling code here:
+        mode = "drawText";
+    }//GEN-LAST:event_textMenuActionPerformed
+
+    private void userListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_userListMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_userListMouseClicked
+
+    private void colorChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorChooserActionPerformed
+        // TODO add your handling code here:
+        JColorChooser colorChooser = new JColorChooser();
+        color = JColorChooser.showDialog(null, "please choose a color", Color.black);
+    }//GEN-LAST:event_colorChooserActionPerformed
+
+    private void drawTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_drawTextActionPerformed
 
     /**
      * paint the whiteboard
@@ -435,6 +527,7 @@ public class BoardClient extends javax.swing.JFrame {
     @Override
     public void paint(Graphics g) {
         System.out.println("enter");
+        g.setColor(color);
         if(mode.equals(FREEDRAW)){
             g.drawLine(start.x, start.y, end.x, end.y);
             System.out.println("draw successful");
@@ -448,17 +541,53 @@ public class BoardClient extends javax.swing.JFrame {
             g.drawOval(startPoint().x, startPoint().y, Math.abs(start.x - end.x), Math.abs(start.y - end.y));
             System.out.println("draw circle successful");
         }else if(mode.equals(DRAWTRI)){
-            g.drawOval(start.x, start.y, Math.abs(start.x - end.x), Math.abs(start.y - end.y));
-            System.out.println("draw circle successful");
+            int[] xPoints = {start.x, end.x, Math.min(start.x, end.x) - Math.abs(start.x - end.x)};
+            int[] yPoints = {start.y, end.y, end.y};
+            g.drawPolygon(xPoints, yPoints, 3);
+            System.out.println("draw triangle successful");
         }
     }
 
-    public void setStart(Point coord){
-        start = coord;
+    /**
+     * method for remote server call to draw different shapes
+     * @param g whiteboard graphics
+     * @param mode draw shape
+     * @param start start point
+     * @param end end point
+     */
+    public void remoteDraw(Graphics g, String mode, Point start, Point end, Color color){
+        this.remoteColor = color;
+        remoteMode = mode;
+        remoteStart.setLocation(start);
+        remoteEnd.setLocation(end);
+        g.setColor(remoteColor);
+        System.out.println("enter remote");
+        if(remoteMode.equals(FREEDRAW)){
+            g.drawLine(remoteStart.x, remoteStart.y, remoteEnd.x, remoteEnd.y);
+            System.out.println("draw successful");
+        }else if(remoteMode.equals(DRAWLINE)){
+            g.drawLine(remoteStart.x, remoteStart.y, remoteEnd.x, remoteEnd.y);
+            System.out.println("draw line successful");
+        }else if(remoteMode.equals(DRAWREC)){
+            g.drawRect(remoteStartPoint().x, remoteStartPoint().y, Math.abs(remoteStart.x - remoteEnd.x), Math.abs(remoteStart.y - remoteEnd.y));
+            System.out.println("draw rectangle successful");
+        }else if(remoteMode.equals(DRAWCIRCLE)){
+            g.drawOval(remoteStartPoint().x, remoteStartPoint().y, Math.abs(remoteStart.x - remoteEnd.x), Math.abs(remoteStart.y - remoteEnd.y));
+            System.out.println("draw circle successful");
+        }else if(remoteMode.equals(DRAWTRI)){
+            int[] xPoints = {remoteStart.x, remoteEnd.x, Math.min(remoteStart.x, remoteEnd.x) - Math.abs(remoteStart.x - remoteEnd.x)};
+            int[] yPoints = {remoteStart.y, remoteEnd.y, remoteEnd.y};
+            g.drawPolygon(xPoints, yPoints, 3);
+            System.out.println("draw triangle successful");
+        }
     }
 
-    public void setEnd(Point coord){
-        end = coord;
+    public void setStart(int x, int y){
+        start.setLocation(x, y);
+    }
+
+    public void setEnd(int x, int y){
+        end.setLocation(x, y);
     }
 
     public void setMode(String mode){
@@ -469,11 +598,38 @@ public class BoardClient extends javax.swing.JFrame {
         return boardPanel;
     }
 
+    /**
+     * top left point, used for drawing different shapes
+     * @return top left point
+     */
     public Point startPoint(){
         Point startPoint = new Point();
         startPoint.x = Math.min(start.x, end.x);
         startPoint.y = Math.min(start.y, end.y);
         return startPoint;
+    }
+
+    /**
+     * remote top left point, used for drawing different shapes
+     * @return top left point
+     */
+    public Point remoteStartPoint(){
+        Point startPoint = new Point();
+        startPoint.x = Math.min(remoteStart.x, remoteEnd.x);
+        startPoint.y = Math.min(remoteStart.y, remoteEnd.y);
+        return startPoint;
+    }
+
+    /**
+     * update clients list in the room currently
+     * @param clients list of client names
+     */
+    public void updateList(ArrayList<String> clients){
+        DefaultListModel userModel = new DefaultListModel();
+        for(String name:clients){
+            userModel.addElement(name);
+        }
+        userList.setModel(userModel);
     }
 
 
@@ -485,6 +641,7 @@ public class BoardClient extends javax.swing.JFrame {
     private javax.swing.JList<String> chatList;
     private javax.swing.JPanel chatPanel;
     private javax.swing.JButton clearButton;
+    private javax.swing.JMenuItem colorChooser;
     private javax.swing.JMenu colorMenu;
     private javax.swing.JMenu currentColor;
     private javax.swing.JMenu currentTool;
@@ -493,6 +650,7 @@ public class BoardClient extends javax.swing.JFrame {
     private javax.swing.JLabel drawLabel;
     private javax.swing.JRadioButtonMenuItem drawLine;
     private javax.swing.JRadioButtonMenuItem drawRect;
+    private javax.swing.JMenuItem drawText;
     private javax.swing.JRadioButtonMenuItem drawTri;
     private javax.swing.JMenu drawingMenu;
     private javax.swing.JMenuItem fileClose;

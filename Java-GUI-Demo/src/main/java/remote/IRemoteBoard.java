@@ -46,5 +46,8 @@ public interface IRemoteBoard extends Remote{
     boolean checkName(String name) throws RemoteException;
 
     // update client's whiteboard and draw a line
-    void draw(String name, String mode, Point start, Point end) throws RemoteException;
+    void draw(String name, String mode, Point start, Point end, Color color) throws RemoteException;
+
+    // check empty client list
+    boolean isEmpty() throws RemoteException;
 }

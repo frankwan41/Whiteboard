@@ -32,7 +32,7 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
             // make the first client being the manager and add to the client list
             client.setManager(name + "(manager)");
             this.manager.addClient(client);
-            System.out.println("pass");
+
         }else{
             // client need to ask manager to join the white board
             try{
@@ -51,9 +51,13 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
             }
         }
 
+        ArrayList<String> names = new ArrayList<>();
+        for(IRemoteClient c:manager.getClientList()){
+            names.add(c.getName());
+        }
         // update client's client list
         for (IRemoteClient c: manager.getClientList()){
-            c.updateClientList(manager.getClientList());
+            c.updateClientList(names);
         }
 
 
@@ -67,8 +71,12 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
                 System.out.println(c.getName() + " leave the room!");
             }
         }
+        ArrayList<String> names = new ArrayList<>();
+        for(IRemoteClient c:manager.getClientList()){
+            names.add(c.getName());
+        }
         for(IRemoteClient c: manager.getClientList()){
-            c.updateClientList(manager.getClientList());
+            c.updateClientList(names);
         }
 
     }
@@ -151,13 +159,24 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
      * @throws RemoteException
      */
     @Override
-    public void draw(String name, String mode, Point start, Point end) throws RemoteException {
+    public void draw(String name, String mode, Point start, Point end, Color color) throws RemoteException {
         for(IRemoteClient client: manager.getClientList()){
             if(!client.getName().equals(name)){
-                System.out.println(client.getName()+"  hhh "+name);
-                client.draw(mode, start, end);
+                client.draw(mode, start, end, color);
             }
         }
     }
 
+    /**
+     * check if client list is empty
+     * @return true if empty
+     * @throws RemoteException
+     */
+    @Override
+    public boolean isEmpty() throws RemoteException {
+        if(manager.getClientList() == null){
+            return true;
+        }
+        return false;
+    }
 }

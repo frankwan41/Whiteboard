@@ -25,7 +25,7 @@ public interface IRemoteClient extends Remote{
     boolean askJoin(String name) throws  RemoteException;
 
     // update clients' peer lists
-    void updateClientList(ArrayList<IRemoteClient> clients) throws  RemoteException;
+    void updateClientList(ArrayList<String> clients) throws  RemoteException;
 
     // update self board while other clients did the drawing
     //void updateBoard(IRemoteMessage message) throws RemoteException;
@@ -46,5 +46,5 @@ public interface IRemoteClient extends Remote{
     boolean isManager() throws RemoteException;
 
     // ask client to draw shapes
-    void draw(String mode, Point start, Point end) throws RemoteException;
+    void draw(String mode, Point start, Point end, Color color) throws RemoteException;
 }
