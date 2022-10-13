@@ -131,7 +131,13 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
                 break;
             }
         }
-
+        ArrayList<String> names = new ArrayList<>();
+        for(IRemoteClient c:manager.getClientList()){
+            names.add(c.getName());
+        }
+        for (IRemoteClient c: manager.getClientList()){
+            c.updateClientList(names);
+        }
     }
 
     /**

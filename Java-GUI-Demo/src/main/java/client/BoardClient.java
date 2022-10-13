@@ -7,8 +7,12 @@ package client;
 import remote.IRemoteBoard;
 import remote.IRemoteClient;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -21,38 +25,45 @@ public class BoardClient extends javax.swing.JFrame {
     private String mode;
     private Point start;
     private Point end;
+    private char key;
     private Point remoteStart;
     private Point remoteEnd;
     private String remoteMode;
     private IRemoteBoard remoteBoard;
+    private char remoteKey;
     public final String DRAWLINE = "drawLine";
     public final String FREEDRAW = "freeDraw";
     public final String DRAWREC = "drawRec";
     public final String DRAWCIRCLE = "drawCircle";
     public final String DRAWTRI = "drawTri";
+    public final String DRAWTEXT = "drawText";
     private String name;
     private Color color;
     private Color remoteColor;
     private ArrayList<String> clientNames;
     DefaultListModel chatModel;
     Graphics g;
+    private boolean isManager;
+    private String fileName;
 
     /**
      * Creates new form BoardClient
      */
-    public BoardClient(IRemoteBoard remoteBoard, String name) {
+    public BoardClient(IRemoteBoard remoteBoard, String name, boolean isManager) {
         this.remoteBoard = remoteBoard;
-        mode = "freeDraw";
+        mode = "";
         remoteStart = new Point(0, 0);
         remoteEnd = new Point(0, 0);
         start = new Point(0, 0);
         end = new Point(0, 0);
         this.name = name;
         userList = new JList<>();
-        color = new Color(51, 213, 51);
-        remoteColor = new Color(0x000000);
+        color = new Color(0, 0, 0);
+        remoteColor = new Color(0, 0, 0);
         chatModel = new DefaultListModel();
+        this.isManager = isManager;
         initComponents();
+
     }
 
     /**
@@ -90,6 +101,7 @@ public class BoardClient extends javax.swing.JFrame {
         drawRect = new javax.swing.JRadioButtonMenuItem();
         drawTri = new javax.swing.JRadioButtonMenuItem();
         drawCir = new javax.swing.JRadioButtonMenuItem();
+        freeDraw = new javax.swing.JMenuItem();
         colorMenu = new javax.swing.JMenu();
         colorChooser = new javax.swing.JMenuItem();
         textMenu = new javax.swing.JMenu();
@@ -100,6 +112,11 @@ public class BoardClient extends javax.swing.JFrame {
         currentColor = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         boardPanel.setBackground(new java.awt.Color(255, 255, 255));
         boardPanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -112,6 +129,9 @@ public class BoardClient extends javax.swing.JFrame {
             }
         });
         boardPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                boardPanelMouseClicked(evt);
+            }
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 boardPanelMousePressed(evt);
             }
@@ -121,6 +141,11 @@ public class BoardClient extends javax.swing.JFrame {
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
                 }
+            }
+        });
+        boardPanel.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                boardPanelKeyTyped(evt);
             }
         });
 
@@ -180,7 +205,11 @@ public class BoardClient extends javax.swing.JFrame {
         });
         userList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                userListMouseClicked(evt);
+                try {
+                    userListMouseClicked(evt);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
         userListPanel.setViewportView(userList);
@@ -260,7 +289,11 @@ public class BoardClient extends javax.swing.JFrame {
         fileSaveAs.setText("Save As");
         fileSaveAs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileSaveAsActionPerformed(evt);
+                try {
+                    fileSaveAsActionPerformed(evt);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
         fileMenu.add(fileSaveAs);
@@ -323,6 +356,15 @@ public class BoardClient extends javax.swing.JFrame {
         });
         shapeMenu.add(drawCir);
 
+        freeDraw.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        freeDraw.setText("FreeDraw");
+        freeDraw.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                freeDrawActionPerformed(evt);
+            }
+        });
+        shapeMenu.add(freeDraw);
+
         menuBar.add(shapeMenu);
 
         colorMenu.setText("Color");
@@ -353,6 +395,8 @@ public class BoardClient extends javax.swing.JFrame {
         textMenu.add(drawText);
 
         menuBar.add(textMenu);
+
+        drawingMenu.setPreferredSize(new java.awt.Dimension(56, 6));
         menuBar.add(drawingMenu);
         menuBar.add(cursorMenu);
 
@@ -416,20 +460,39 @@ public class BoardClient extends javax.swing.JFrame {
 
     private void fileSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileSaveActionPerformed
         // TODO add your handling code here:
-    
+        int option = JOptionPane.showConfirmDialog(null, "Have you saved your board?", "Confirm", JOptionPane.YES_NO_OPTION);
+        if(option == 0){
+
+        }
     }//GEN-LAST:event_fileSaveActionPerformed
 
-    private void fileSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileSaveAsActionPerformed
+    private void fileSaveAsActionPerformed(java.awt.event.ActionEvent evt) throws IOException {//GEN-FIRST:event_fileSaveAsActionPerformed
         // TODO add your handling code here:
+        String name = JOptionPane.showInputDialog(null, "Enter a file name");
+        BufferedImage image = new BufferedImage(boardPanel.getWidth(), boardPanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = (Graphics2D) image.createGraphics();
+        boardPanel.printAll(g2d);
+        //g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        File outputfile = new File(name + ".png");
+        ImageIO.write(image, "png", outputfile);
+
     }//GEN-LAST:event_fileSaveAsActionPerformed
 
     private void fileCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileCloseActionPerformed
         // TODO add your handling code here:
+        int option = JOptionPane.showConfirmDialog(null, "Have you saved your board?", "Confirm", JOptionPane.YES_NO_OPTION);
+        if(option == 0){
+            dispose();
+            System.exit(0);
+        }
     }//GEN-LAST:event_fileCloseActionPerformed
 
     private void newBoardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newBoardActionPerformed
         // TODO add your handling code here:
-        
+        int option = JOptionPane.showConfirmDialog(null, "Have you saved your board?", "Confirm", JOptionPane.YES_NO_OPTION);
+        if(option == 0){
+            repaint();
+        }
     }//GEN-LAST:event_newBoardActionPerformed
 
     private void shapeMenuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_shapeMenuMouseClicked
@@ -454,19 +517,24 @@ public class BoardClient extends javax.swing.JFrame {
 
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
         // TODO add your handling code here:
+        int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to clean chat?", "Confirm", JOptionPane.YES_NO_OPTION);
+        if(option == 0){
+            chatModel = new DefaultListModel();
+            chatList.setModel(chatModel);
+        }
     }//GEN-LAST:event_clearButtonActionPerformed
 
     private void boardPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boardPanelMousePressed
         // TODO add your handling code here:
         start.setLocation(evt.getX(), evt.getY());
-        //end.setLocation(0, 0);
+        //end.setLocation(evt.getX(), evt.getY());
         System.out.println("location0"+start+"  "+end+"evt"+evt.getX()+" "+evt.getY());
     }//GEN-LAST:event_boardPanelMousePressed
 
     private void boardPanelMouseReleased(java.awt.event.MouseEvent evt) throws RemoteException {//GEN-FIRST:event_boardPanelMouseReleased
         // TODO add your handling code here:
         g = boardPanel.getGraphics();
-        paint(g);
+        draw(g);
         remoteBoard.draw(name, mode, start, end, color);
         start.setLocation(0, 0);
         end.setLocation(0, 0);
@@ -479,16 +547,16 @@ public class BoardClient extends javax.swing.JFrame {
         g = boardPanel.getGraphics();
         if(mode.equals(FREEDRAW)){
             end.setLocation(evt.getX(), evt.getY());
-            paint(g);
+            draw(g);
             remoteBoard.draw(name, mode, start, end, color);
             start = end;
         }else if(mode.equals(DRAWLINE)|| mode.equals(DRAWREC) || mode.equals(DRAWTRI) || mode.equals(DRAWCIRCLE)){
             if(end.x != 0 &&  end.y != 0){
                 g.setXORMode(boardPanel.getBackground());
-                paint(g);
+                draw(g);
             }
             end.setLocation(evt.getX(), evt.getY());
-            paint(g);
+            draw(g);
         }
 
     }//GEN-LAST:event_boardPanelMouseDragged
@@ -496,7 +564,7 @@ public class BoardClient extends javax.swing.JFrame {
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {//GEN-FIRST:event_sendButtonActionPerformed
         // TODO add your handling code here:
         remoteBoard.addMessage(name, inputArea.getText());
-
+        inputArea.setText("");
     }//GEN-LAST:event_sendButtonActionPerformed
 
     private void drawRectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawRectActionPerformed
@@ -513,8 +581,20 @@ public class BoardClient extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_textMenuActionPerformed
 
-    private void userListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_userListMouseClicked
+    private void userListMouseClicked(java.awt.event.MouseEvent evt) throws RemoteException {//GEN-FIRST:event_userListMouseClicked
         // TODO add your handling code here:
+        if(evt.getClickCount() == 2 && isManager){
+            if(userList.locationToIndex(evt.getPoint()) == 0){
+                JOptionPane.showMessageDialog(null, "Can't kick out yourself!");
+            }else {
+                String name = userList.getModel().getElementAt(userList.locationToIndex(evt.getPoint()));
+                int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to kick "+name+" ?", "Confirm", JOptionPane.YES_NO_OPTION);
+                if(option == 0){
+                    remoteBoard.kickUser(name);
+                }
+                System.out.println(name);
+            }
+        }
     }//GEN-LAST:event_userListMouseClicked
 
     private void colorChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorChooserActionPerformed
@@ -525,15 +605,42 @@ public class BoardClient extends javax.swing.JFrame {
 
     private void drawTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawTextActionPerformed
         // TODO add your handling code here:
-        mode = "drawText";
+        mode = DRAWTEXT;
     }//GEN-LAST:event_drawTextActionPerformed
+
+    private void freeDrawActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_freeDrawActionPerformed
+        // TODO add your handling code here:
+        mode = FREEDRAW;
+    }//GEN-LAST:event_freeDrawActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?", "exit", JOptionPane.YES_NO_OPTION);
+        if(option == 0){
+            dispose();
+            System.exit(0);
+        }
+    }//GEN-LAST:event_formWindowClosing
+
+    private void boardPanelKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_boardPanelKeyTyped
+        // TODO add your handling code here:
+        key = evt.getKeyChar();
+        draw(g);
+    }//GEN-LAST:event_boardPanelKeyTyped
+
+    private void boardPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boardPanelMouseClicked
+        // TODO add your handling code here:
+        if(mode.equals(DRAWTEXT)){
+            start.setLocation(evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_boardPanelMouseClicked
 
     /**
      * paint the whiteboard
      * @param g graphics
      */
-    @Override
-    public void paint(Graphics g) {
+    //@Override
+    public void draw(Graphics g) {
         System.out.println("enter");
         g.setColor(color);
         if(mode.equals(FREEDRAW)){
@@ -553,6 +660,9 @@ public class BoardClient extends javax.swing.JFrame {
             int[] yPoints = {start.y, end.y, end.y};
             g.drawPolygon(xPoints, yPoints, 3);
             System.out.println("draw triangle successful");
+        } else if(mode.equals(DRAWTEXT)){
+            g.drawString(String.valueOf(key), start.x, start.y);
+            System.out.println("draw text successful");
         }
     }
 
@@ -588,18 +698,6 @@ public class BoardClient extends javax.swing.JFrame {
             g.drawPolygon(xPoints, yPoints, 3);
             System.out.println("draw triangle successful");
         }
-    }
-
-    public void setStart(int x, int y){
-        start.setLocation(x, y);
-    }
-
-    public void setEnd(int x, int y){
-        end.setLocation(x, y);
-    }
-
-    public void setMode(String mode){
-        this.mode = mode;
     }
 
     public JPanel getBoardPanel() {
@@ -686,6 +784,7 @@ public class BoardClient extends javax.swing.JFrame {
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem fileSave;
     private javax.swing.JMenuItem fileSaveAs;
+    private javax.swing.JMenuItem freeDraw;
     private javax.swing.JTextArea inputArea;
     private javax.swing.JScrollPane inputPanel;
     private javax.swing.JPanel listPanel;

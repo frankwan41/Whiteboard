@@ -58,9 +58,9 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
                 }else{
                     // create board and check if client is a manager
                     if(remoteBoard.isEmpty()){
-                        createBoard(remoteBoard, name+"(manager)");
+                        createBoard(remoteBoard, name+"(manager)", true);
                     }else {
-                        createBoard(remoteBoard, name);
+                        createBoard(remoteBoard, name, false);
                     }
 
                     // add client to the server list
@@ -89,9 +89,9 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
     }
 
 
-    public static void createBoard(IRemoteBoard remoteBoard, String name){
+    public static void createBoard(IRemoteBoard remoteBoard, String name, boolean isManager){
         /* Create and display the form */
-        board = new BoardClient(remoteBoard, name);
+        board = new BoardClient(remoteBoard, name, isManager);
         board.setVisible(true);
         board.setSize(500,500);
     }
@@ -152,7 +152,6 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
     public void updateClientList(ArrayList<String> clients) throws RemoteException {
         clientList = clients;
         board.updateList(clients);
-        System.out.println(clientList.size());
     }
 
     @Override
@@ -175,7 +174,7 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                JOptionPane.showMessageDialog(null,"Sorry, you are not allowed tn enter",  "Access denied!", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null,"Sorry, you are not allowed to enter",  "Access denied!", JOptionPane.ERROR_MESSAGE);
                 board.dispose();
                 System.exit(0);
             }
