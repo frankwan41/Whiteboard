@@ -9,9 +9,11 @@ import java.util.ArrayList;
 public class Manager {
 
     private ArrayList<IRemoteClient> clientList;
+    private ArrayList<String> messages;
 
     public void Manager(){
         //this.clientList = new ArrayList<>();
+        //messages = new ArrayList<>();
     }
 
     public void addClient(IRemoteClient client){
@@ -40,5 +42,26 @@ public class Manager {
             }
         }
         return false;
+    }
+
+    /**
+     * get current messages list
+     * @return a list of messages
+     */
+    public ArrayList<String> getMessages(){
+        return this.messages;
+    }
+
+    /**
+     * add one message
+     * @param text message content
+     */
+    public void addMessage(String text){
+        if(messages == null){
+            messages = new ArrayList<>();
+            messages.add(text);
+        }else {
+            messages.add(text);
+        }
     }
 }

@@ -47,4 +47,10 @@ public interface IRemoteClient extends Remote{
 
     // ask client to draw shapes
     void draw(String mode, Point start, Point end, Color color) throws RemoteException;
+
+    // update chat when connect to the server
+    void synMessages(ArrayList<String> text) throws RemoteException;
+
+    // add one message
+    void addMessage(String text) throws RemoteException;
 }

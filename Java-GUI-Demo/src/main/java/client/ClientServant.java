@@ -56,7 +56,7 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
                     JOptionPane.showMessageDialog(null,"Can't use identical name!", "Warning!", JOptionPane.WARNING_MESSAGE);
                     System.exit(0);
                 }else{
-                    // create board
+                    // create board and check if client is a manager
                     if(remoteBoard.isEmpty()){
                         createBoard(remoteBoard, name+"(manager)");
                     }else {
@@ -211,5 +211,23 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
             }
         });
         t.start();
+    }
+
+    /**
+     * synchronize previous chat when connect to the server
+     * @param messages a list of messages
+     */
+    public void synMessages(ArrayList<String> messages){
+        board.updateChat(messages);
+    }
+
+    /**
+     * add one message
+     * @param text message that we need to add
+     * @throws RemoteException
+     */
+    @Override
+    public void addMessage(String text) throws RemoteException {
+        board.addMessage(text);
     }
 }

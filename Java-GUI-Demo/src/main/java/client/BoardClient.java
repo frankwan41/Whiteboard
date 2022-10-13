@@ -34,6 +34,7 @@ public class BoardClient extends javax.swing.JFrame {
     private Color color;
     private Color remoteColor;
     private ArrayList<String> clientNames;
+    DefaultListModel chatModel;
     Graphics g;
 
     /**
@@ -50,6 +51,7 @@ public class BoardClient extends javax.swing.JFrame {
         userList = new JList<>();
         color = new Color(51, 213, 51);
         remoteColor = new Color(0x000000);
+        chatModel = new DefaultListModel();
         initComponents();
     }
 
@@ -152,7 +154,11 @@ public class BoardClient extends javax.swing.JFrame {
         sendButton.setText("Send");
         sendButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendButtonActionPerformed(evt);
+                try {
+                    sendButtonActionPerformed(evt);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 
@@ -487,8 +493,10 @@ public class BoardClient extends javax.swing.JFrame {
 
     }//GEN-LAST:event_boardPanelMouseDragged
 
-    private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
+    private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {//GEN-FIRST:event_sendButtonActionPerformed
         // TODO add your handling code here:
+        remoteBoard.addMessage(name, inputArea.getText());
+
     }//GEN-LAST:event_sendButtonActionPerformed
 
     private void drawRectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawRectActionPerformed
@@ -503,7 +511,6 @@ public class BoardClient extends javax.swing.JFrame {
 
     private void textMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textMenuActionPerformed
         // TODO add your handling code here:
-        mode = "drawText";
     }//GEN-LAST:event_textMenuActionPerformed
 
     private void userListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_userListMouseClicked
@@ -518,6 +525,7 @@ public class BoardClient extends javax.swing.JFrame {
 
     private void drawTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawTextActionPerformed
         // TODO add your handling code here:
+        mode = "drawText";
     }//GEN-LAST:event_drawTextActionPerformed
 
     /**
@@ -630,6 +638,27 @@ public class BoardClient extends javax.swing.JFrame {
             userModel.addElement(name);
         }
         userList.setModel(userModel);
+    }
+
+    /**
+     * update chat when connect to the server
+     * @param text a list of messages
+     */
+    public void updateChat(ArrayList<String> text){
+        if(!(text == null)){
+            for(String name:text){
+                chatModel.addElement(name);
+            }
+        }
+        chatList.setModel(chatModel);
+    }
+
+    /**
+     * add one message to the list
+     * @param text message
+     */
+    public void addMessage(String text){
+        chatModel.addElement(text);
     }
 
 

@@ -51,11 +51,13 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
             }
         }
 
+        client.synMessages(synMessages());
+        // get a list of clients names
         ArrayList<String> names = new ArrayList<>();
         for(IRemoteClient c:manager.getClientList()){
             names.add(c.getName());
         }
-        // update client's client list
+        // update client's client list and messages
         for (IRemoteClient c: manager.getClientList()){
             c.updateClientList(names);
         }
@@ -178,5 +180,32 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
             return true;
         }
         return false;
+    }
+
+    /**
+     * synchronize current messages
+     * @return a list of messages
+     * @throws RemoteException
+     */
+    @Override
+    public ArrayList<String> synMessages() throws RemoteException {
+        return manager.getMessages();
+    }
+
+    /**
+     * add one message at a time
+     * @param name the client who sends the message
+     * @param text message content
+     * @throws RemoteException
+     */
+    @Override
+    public void addMessage(String name, String text) throws RemoteException {
+        String message = name + ": " + text;
+        manager.addMessage(message);
+        for(IRemoteClient client: manager.getClientList()){
+            //if(!client.getName().equals(name)){
+                client.addMessage(message);
+            //}
+        }
     }
 }

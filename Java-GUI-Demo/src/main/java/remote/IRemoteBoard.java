@@ -12,7 +12,11 @@ import java.util.ArrayList;
  */
 
 public interface IRemoteBoard extends Remote{
-    // For joined clients
+    // get previous chat messages
+    ArrayList<String> synMessages() throws RemoteException;
+
+    // add one chat message
+    void addMessage(String name, String text) throws RemoteException;
 
     // client join the white board with unique username
     void joinBoard(IRemoteClient client, String name) throws RemoteException;
@@ -25,9 +29,6 @@ public interface IRemoteBoard extends Remote{
 
     // the new client should obtain the current state of the white board
     byte[] currentBoard() throws RemoteException;
-
-    // broadcast message to all clients
-    //void broadCast(IRemoteMessage message) throws RemoteException;
 
     // For manager
     // create new white board
