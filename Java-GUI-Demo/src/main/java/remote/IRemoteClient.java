@@ -53,4 +53,7 @@ public interface IRemoteClient extends Remote{
 
     // add one message
     void addMessage(String text) throws RemoteException;
+
+    // notify every client that a client is kicked out
+    void notification(String text) throws RemoteException;
 }
