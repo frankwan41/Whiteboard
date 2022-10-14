@@ -30,66 +30,10 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
     private ArrayList<String> clientList;
 
     public ClientServant() throws RemoteException, NullPointerException {
-        this.name = "";
-        this.isManager = false;
-    }
-
-    public static void main(String[] args) {
-
-
-        try{
-            // find remote interface
-            Registry registry = LocateRegistry.getRegistry(4321);
-            IRemoteBoard remoteBoard = (IRemoteBoard) registry.lookup("WhiteBoard");
-
-            // ask for client name
-            IRemoteClient remoteClient = new ClientServant();
-            String name = JOptionPane.showInputDialog("What is your name?");
-
-            //check empty name
-            if(name.equals("")){
-                JOptionPane.showMessageDialog(null,"Can't use empty name!", "Warning!", JOptionPane.WARNING_MESSAGE);
-                System.exit(0);
-            }else{
-                // check identical name
-                if(remoteBoard.checkName(name)){
-                    JOptionPane.showMessageDialog(null,"Can't use identical name!", "Warning!", JOptionPane.WARNING_MESSAGE);
-                    System.exit(0);
-                }else{
-                    // create board and check if client is a manager
-                    if(remoteBoard.isEmpty()){
-                        createBoard(remoteBoard, name+"(manager)", true);
-                    }else {
-                        createBoard(remoteBoard, name, false);
-                    }
-
-                    // add client to the server list
-                    remoteBoard.joinBoard(remoteClient, name);
-                }
-
-            }
-        } catch (AccessException e) {
-            JOptionPane.showMessageDialog(null,"Access denied", "Warning!", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-            System.exit(0);
-        } catch (NotBoundException e) {
-            JOptionPane.showMessageDialog(null,"The port already in use or port number is incorrect",  "Warning!", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-            System.exit(0);
-        } catch (RemoteException e) {
-            JOptionPane.showMessageDialog(null,"lost connection to RMI",  "Warning!", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-            System.exit(0);
-        } catch (NullPointerException e){
-            JOptionPane.showMessageDialog(null,"some variables are null",  "Warning!", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-            System.exit(0);
-        }
 
     }
 
-
-    public static void createBoard(IRemoteBoard remoteBoard, String name, boolean isManager){
+    public void createBoard(IRemoteBoard remoteBoard, String name, boolean isManager){
         /* Create and display the form */
         board = new BoardClient(remoteBoard, name, isManager);
         board.setVisible(true);
@@ -236,7 +180,7 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
      * @throws RemoteException
      */
     @Override
-    public void notification(String text) throws RemoteException {
+    public void notification(String text) {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {

@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.rmi.ConnectException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -46,11 +47,12 @@ public class BoardClient extends javax.swing.JFrame {
     Graphics g;
     private boolean isManager;
     private String fileName;
+    private Object RemoteException;
 
     /**
      * Creates new form BoardClient
      */
-    public BoardClient(IRemoteBoard remoteBoard, String name, boolean isManager) {
+    public BoardClient(IRemoteBoard remoteBoard, String name, boolean isManager){
         this.remoteBoard = remoteBoard;
         mode = "";
         remoteStart = new Point(0, 0);
@@ -127,7 +129,9 @@ public class BoardClient extends javax.swing.JFrame {
                 try {
                     boardPanelMouseDragged(evt);
                 } catch (RemoteException e) {
-                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null,
+                            "Server is down, the board will close automatically!","warning",JOptionPane.WARNING_MESSAGE);
+                    System.exit(1);
                 }
             }
         });
@@ -142,7 +146,9 @@ public class BoardClient extends javax.swing.JFrame {
                 try {
                     boardPanelMouseReleased(evt);
                 } catch (RemoteException e) {
-                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null,
+                            "Server is down, the board will close automatically!","warning",JOptionPane.WARNING_MESSAGE);
+                    System.exit(1);
                 }
             }
         });
@@ -176,7 +182,7 @@ public class BoardClient extends javax.swing.JFrame {
         inputArea.setColumns(20);
         inputArea.setLineWrap(true);
         inputArea.setRows(5);
-        inputArea.setText("sdfa ijdj ajid ijs ifjaijfij jid fjai fij djalf jad jkfjaijdij kfjijf ad kfiakdj ifka jid akfj ij idkasj da d\n\n\n\nd\nas\nf\ns\nd\na\nf\n");
+        inputArea.setText("");
         inputPanel.setViewportView(inputArea);
 
         sendButton.setText("Send");
@@ -185,7 +191,9 @@ public class BoardClient extends javax.swing.JFrame {
                 try {
                     sendButtonActionPerformed(evt);
                 } catch (RemoteException e) {
-                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null,
+                            "Server is down, the board will close automatically!","warning",JOptionPane.WARNING_MESSAGE);
+                    System.exit(1);
                 }
             }
         });
@@ -211,7 +219,9 @@ public class BoardClient extends javax.swing.JFrame {
                 try {
                     userListMouseClicked(evt);
                 } catch (RemoteException e) {
-                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null,
+                            "Server is down, the board will close automatically!","warning",JOptionPane.WARNING_MESSAGE);
+                    System.exit(1);
                 }
             }
         });
@@ -268,6 +278,9 @@ public class BoardClient extends javax.swing.JFrame {
         menuBar.setMinimumSize(new java.awt.Dimension(20, 20));
         menuBar.setPreferredSize(new java.awt.Dimension(300, 27));
 
+        if (!isManager) {
+            fileMenu.setVisible(false);
+        }
         fileMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/folder.png")); // NOI18N
         fileMenu.setText("File");
 
@@ -404,7 +417,7 @@ public class BoardClient extends javax.swing.JFrame {
         });
 
         modeGroup.add(drawText);
-        drawText.setSelected(true);
+        drawText.setSelected(false);
         drawText.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/drawtext.png")); // NOI18N
         textMenu.add(drawText);
 
@@ -581,6 +594,8 @@ public class BoardClient extends javax.swing.JFrame {
         g = boardPanel.getGraphics();
         draw(g);
         remoteBoard.draw(name, mode, start, end, color);
+        System.out.println("after remote draw");
+
         start.setLocation(0, 0);
         end.setLocation(0, 0);
 
@@ -664,7 +679,7 @@ public class BoardClient extends javax.swing.JFrame {
                 } catch (IOException e) {
                     System.out.println("The application occurred an error when manager close the application");
                 }finally {
-                    System.exit(0);
+                    System.exit(1);
                 }
                 //System.exit(0);
             }
@@ -715,7 +730,7 @@ public class BoardClient extends javax.swing.JFrame {
      * @param g graphics
      */
     //@Override
-    public void draw(Graphics g) {
+    public void draw(Graphics g){
         System.out.println("enter");
         g.setColor(color);
         Graphics2D g2d = (Graphics2D) g;
@@ -725,7 +740,7 @@ public class BoardClient extends javax.swing.JFrame {
             System.out.println("draw successful");
         }else if(mode.equals(DRAWLINE)){
             g2d.drawLine(start.x, start.y, end.x, end.y);
-            System.out.println("draw line successful");
+            System.out.println("draw local line successful");
         }else if(mode.equals(DRAWREC)){
             g2d.drawRect(startPoint().x, startPoint().y, Math.abs(start.x - end.x), Math.abs(start.y - end.y));
             System.out.println("draw rectangle successful");
@@ -762,14 +777,14 @@ public class BoardClient extends javax.swing.JFrame {
             System.out.println("draw successful");
         }else if(remoteMode.equals(DRAWLINE)){
             g.drawLine(remoteStart.x, remoteStart.y, remoteEnd.x, remoteEnd.y);
-            System.out.println("draw line successful");
+            System.out.println("draw remote line successful");
         }else if(remoteMode.equals(DRAWREC)){
             g.drawRect(remoteStartPoint().x, remoteStartPoint().y, Math.abs(remoteStart.x - remoteEnd.x), Math.abs(remoteStart.y - remoteEnd.y));
             System.out.println("draw rectangle successful");
         }else if(remoteMode.equals(DRAWCIRCLE)){
             g.drawOval(remoteStartPoint().x, remoteStartPoint().y, Math.abs(remoteStart.x - remoteEnd.x), Math.abs(remoteStart.y - remoteEnd.y));
             System.out.println("draw circle successful");
-        }else if(remoteMode.equals(DRAWTRI)){
+        }else if(remoteMode.equals(DRAWTRI)) {
             int[] xPoints = {remoteStart.x, remoteEnd.x, Math.min(remoteStart.x, remoteEnd.x) - Math.abs(remoteStart.x - remoteEnd.x)};
             int[] yPoints = {remoteStart.y, remoteEnd.y, remoteEnd.y};
             g.drawPolygon(xPoints, yPoints, 3);

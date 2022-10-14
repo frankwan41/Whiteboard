@@ -27,6 +27,8 @@ public interface IRemoteClient extends Remote{
     // update clients' peer lists
     void updateClientList(ArrayList<String> clients) throws  RemoteException;
 
+    void createBoard(IRemoteBoard remoteBoard, String name, boolean isManager) throws RemoteException;
+
     // update self board while other clients did the drawing
     //void updateBoard(IRemoteMessage message) throws RemoteException;
 

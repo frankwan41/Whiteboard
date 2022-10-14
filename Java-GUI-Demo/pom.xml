@@ -50,7 +50,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>client.ClientServant</mainClass>
+                                    <mainClass>client.CreateWhiteBoard</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
@@ -66,6 +66,25 @@
                     </execution>
                     <execution>
                         <id>build-b</id>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>client.JoinWhiteBoard</mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <!-- <appendAssemblyId>false</appendAssemblyId> -->
+                            <finalName>client</finalName>
+                        </configuration>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>build-c</id>
                         <configuration>
                             <archive>
                                 <manifest>
