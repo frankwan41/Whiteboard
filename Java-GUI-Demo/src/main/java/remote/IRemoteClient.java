@@ -1,6 +1,7 @@
 package remote;
 
 import java.awt.*;
+import java.io.IOException;
 import java.rmi.*;
 import java.util.ArrayList;
 
@@ -39,7 +40,7 @@ public interface IRemoteClient extends Remote{
     void clearBoard() throws  RemoteException;
 
     // invoke when manager "open" the existing board, all clients should obtain the board state
-    void updateOpenBoard(byte[] boardState) throws  RemoteException;
+    void updateOpenBoard(byte[] bytes) throws IOException;
 
     // invoke when the manager "close" the board
     void closeBoard() throws RemoteException;
@@ -48,7 +49,7 @@ public interface IRemoteClient extends Remote{
     boolean isManager() throws RemoteException;
 
     // ask client to draw shapes
-    void draw(String mode, Point start, Point end, Color color) throws RemoteException;
+    void draw(String mode, Point start, Point end, Color color, String text) throws RemoteException;
 
     // update chat when connect to the server
     void synMessages(ArrayList<String> text) throws RemoteException;

@@ -11,6 +11,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.ConnectException;
@@ -47,7 +49,10 @@ public class BoardClient extends javax.swing.JFrame {
     Graphics g;
     private boolean isManager;
     private String fileName;
-    private Object RemoteException;
+    private BufferedImage image;
+    private Graphics2D g2d;
+    private String textDraw;
+    private String remoteTextDraw;
 
     /**
      * Creates new form BoardClient
@@ -66,7 +71,11 @@ public class BoardClient extends javax.swing.JFrame {
         chatModel = new DefaultListModel();
         this.isManager = isManager;
         initComponents();
-
+        fileName = null;
+        image  = new BufferedImage(boardPanel.getWidth(), boardPanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+        g2d = image.createGraphics();
+        g2d.setColor(Color.white);
+        g2d.fillRect(0, 0, boardPanel.getWidth(), boardPanel.getHeight());
     }
 
     /**
@@ -299,7 +308,11 @@ public class BoardClient extends javax.swing.JFrame {
         fileOpen.setText("Open");
         fileOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileOpenActionPerformed(evt);
+                try {
+                    fileOpenActionPerformed(evt);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
         fileMenu.add(fileOpen);
@@ -309,7 +322,11 @@ public class BoardClient extends javax.swing.JFrame {
         fileSave.setText("Save");
         fileSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileSaveActionPerformed(evt);
+                try {
+                    fileSaveActionPerformed(evt);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
         fileMenu.add(fileSave);
@@ -322,7 +339,7 @@ public class BoardClient extends javax.swing.JFrame {
                 try {
                     fileSaveAsActionPerformed(evt);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
         });
@@ -419,6 +436,13 @@ public class BoardClient extends javax.swing.JFrame {
         modeGroup.add(drawText);
         drawText.setSelected(false);
         drawText.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/drawtext.png")); // NOI18N
+        drawText.setSelected(true);
+        drawText.setText("drawText");
+        drawText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                drawTextActionPerformed(evt);
+            }
+        });
         textMenu.add(drawText);
 
         menuBar.add(textMenu);
@@ -514,23 +538,27 @@ public class BoardClient extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void fileSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileSaveActionPerformed
+    private void fileSaveActionPerformed(java.awt.event.ActionEvent evt) throws IOException {//GEN-FIRST:event_fileSaveActionPerformed
         // TODO add your handling code here:
-        int option = JOptionPane.showConfirmDialog(null, "Have you saved your board?", "Confirm", JOptionPane.YES_NO_OPTION);
-        if(option == 0){
-
+        if(fileName == null){
+            fileName = JOptionPane.showInputDialog(null, "Enter a file name");
+            while (fileName == null || fileName.equals("")){
+                JOptionPane.showMessageDialog(null, "Can't enter empty name!");
+                fileName = JOptionPane.showInputDialog(null, "Enter a file name");
+            }
         }
+        File outputfile = new File(fileName);
+        ImageIO.write(image, "png", outputfile);
     }//GEN-LAST:event_fileSaveActionPerformed
 
     private void fileSaveAsActionPerformed(java.awt.event.ActionEvent evt) throws IOException {//GEN-FIRST:event_fileSaveAsActionPerformed
         // TODO add your handling code here:
         String name = JOptionPane.showInputDialog(null, "Enter a file name");
-        BufferedImage image = new BufferedImage(boardPanel.getWidth(), boardPanel.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = (Graphics2D) image.getGraphics();
-        g2d.drawImage(image,0,0,null);
-        g2d.dispose();
-        // boardPanel.printAll(g2d);
-        //g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        while (name == null || name.equals("")){
+            JOptionPane.showMessageDialog(null, "Can't enter empty name!");
+            name = JOptionPane.showInputDialog(null, "Enter a file name");
+        }
+        fileName = name + ".png";
         File outputfile = new File(name + ".png");
         ImageIO.write(image, "png", outputfile);
 
@@ -593,9 +621,8 @@ public class BoardClient extends javax.swing.JFrame {
         end = evt.getPoint();
         g = boardPanel.getGraphics();
         draw(g);
-        remoteBoard.draw(name, mode, start, end, color);
-        System.out.println("after remote draw");
-
+        drawImage(g2d);
+        remoteBoard.draw(name, mode, start, end, color, textDraw);
         start.setLocation(0, 0);
         end.setLocation(0, 0);
 
@@ -608,7 +635,7 @@ public class BoardClient extends javax.swing.JFrame {
         if(mode.equals(FREEDRAW)){
             end.setLocation(evt.getX(), evt.getY());
             draw(g);
-            remoteBoard.draw(name, mode, start, end, color);
+            remoteBoard.draw(name, mode, start, end, color, textDraw);
             start = end;
         }else if(mode.equals(DRAWLINE)|| mode.equals(DRAWREC) || mode.equals(DRAWTRI) || mode.equals(DRAWCIRCLE)){
             if(end.x != 0 &&  end.y != 0) {
@@ -639,6 +666,7 @@ public class BoardClient extends javax.swing.JFrame {
 
     private void textMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textMenuActionPerformed
         // TODO add your handling code here:
+        mode = DRAWTEXT;
     }//GEN-LAST:event_textMenuActionPerformed
 
     private void userListMouseClicked(java.awt.event.MouseEvent evt) throws RemoteException {//GEN-FIRST:event_userListMouseClicked
@@ -652,7 +680,6 @@ public class BoardClient extends javax.swing.JFrame {
                 if(option == 0){
                     remoteBoard.kickUser(name);
                 }
-                System.out.println(name);
             }
         }
     }//GEN-LAST:event_userListMouseClicked
@@ -661,6 +688,7 @@ public class BoardClient extends javax.swing.JFrame {
         // TODO add your handling code here:
         JColorChooser colorChooser = new JColorChooser();
         color = JColorChooser.showDialog(null, "please choose a color", Color.black);
+        currentColor.setBackground(color);
     }//GEN-LAST:event_colorChooserActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt){//GEN-FIRST:event_formWindowClosing
@@ -701,8 +729,8 @@ public class BoardClient extends javax.swing.JFrame {
 
     private void boardPanelKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_boardPanelKeyTyped
         // TODO add your handling code here:
-        key = evt.getKeyChar();
-        draw(g);
+//        key = evt.getKeyChar();
+//        draw(g);
     }//GEN-LAST:event_boardPanelKeyTyped
 
     private void boardPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boardPanelMouseClicked
@@ -721,9 +749,26 @@ public class BoardClient extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cursorButtonActionPerformed
 
-    private void fileOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileOpenActionPerformed
+    private void fileOpenActionPerformed(java.awt.event.ActionEvent evt) throws IOException {//GEN-FIRST:event_fileOpenActionPerformed
         // TODO add your handling code here:
+        FileDialog fileDialog = new FileDialog(this, "open an image", FileDialog.LOAD);
+        fileDialog.setVisible(true);
+        if (fileDialog.getFile() != null) {
+            // read image file and convert it to bytes and send to others
+            this.image = ImageIO.read(new File(fileDialog.getDirectory() + fileDialog.getFile()));
+            g2d = (Graphics2D) image.getGraphics();
+            boardPanel.getGraphics().drawImage(image, 0, 0, null);
+            ByteArrayOutputStream imageArray = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", imageArray);
+            remoteBoard.newBoard(imageArray.toByteArray());
+        }
+
     }//GEN-LAST:event_fileOpenActionPerformed
+
+    private void drawTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawTextActionPerformed
+        // TODO add your handling code here:
+        mode = DRAWTEXT;
+    }//GEN-LAST:event_drawTextActionPerformed
 
     /**
      * paint the whiteboard
@@ -733,10 +778,12 @@ public class BoardClient extends javax.swing.JFrame {
     public void draw(Graphics g){
         System.out.println("enter");
         g.setColor(color);
+        this.g2d.setColor(color);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setStroke(new BasicStroke(2));
         if(mode.equals(FREEDRAW)){
             g2d.drawLine(start.x, start.y, end.x, end.y);
+            this.g2d.drawLine(start.x, start.y, end.x, end.y);
             System.out.println("draw successful");
         }else if(mode.equals(DRAWLINE)){
             g2d.drawLine(start.x, start.y, end.x, end.y);
@@ -753,8 +800,11 @@ public class BoardClient extends javax.swing.JFrame {
             g2d.drawPolygon(xPoints, yPoints, 3);
             System.out.println("draw triangle successful");
         } else if(mode.equals(DRAWTEXT)){
-            g2d.drawString(String.valueOf(key), start.x, start.y);
-            System.out.println("draw text successful");
+            textDraw = JOptionPane.showInputDialog(null, "Please input text");
+            if(textDraw != null){
+                g2d.drawString(textDraw, start.x, start.y);
+                System.out.println("draw text successful");
+            }
         }
     }
 
@@ -765,11 +815,12 @@ public class BoardClient extends javax.swing.JFrame {
      * @param start start point
      * @param end end point
      */
-    public void remoteDraw(Graphics g, String mode, Point start, Point end, Color color){
+    public void remoteDraw(Graphics g, String mode, Point start, Point end, Color color, String text){
         this.remoteColor = color;
         remoteMode = mode;
         remoteStart.setLocation(start);
         remoteEnd.setLocation(end);
+        remoteTextDraw = text;
         g.setColor(remoteColor);
         System.out.println("enter remote");
         if(remoteMode.equals(FREEDRAW)){
@@ -789,6 +840,32 @@ public class BoardClient extends javax.swing.JFrame {
             int[] yPoints = {remoteStart.y, remoteEnd.y, remoteEnd.y};
             g.drawPolygon(xPoints, yPoints, 3);
             System.out.println("draw triangle successful");
+        }else if(mode.equals(DRAWTEXT)){
+            if(remoteTextDraw != null){
+                g.drawString(remoteTextDraw, start.x, start.y);
+                System.out.println("draw text successful");
+            }
+        }
+    }
+
+    /**
+     * used to draw everything to an image
+     * @param graphics2D graphics
+     */
+    public void drawImage(Graphics2D graphics2D){
+        graphics2D.setColor(color);
+        if(mode.equals(DRAWLINE)){
+            graphics2D.drawLine(start.x, start.y, end.x, end.y);
+        }else if(mode.equals(DRAWREC)){
+            graphics2D.drawRect(startPoint().x, startPoint().y, Math.abs(start.x - end.x), Math.abs(start.y - end.y));
+        }else if(mode.equals(DRAWCIRCLE)){
+            graphics2D.drawOval(startPoint().x, startPoint().y, Math.abs(start.x - end.x), Math.abs(start.y - end.y));
+        }else if(mode.equals(DRAWTRI)){
+            int[] xPoints = {start.x, end.x, Math.min(start.x, end.x) - Math.abs(start.x - end.x)};
+            int[] yPoints = {start.y, end.y, end.y};
+            graphics2D.drawPolygon(xPoints, yPoints, 3);
+        } else if(mode.equals(DRAWTEXT)){
+            graphics2D.drawString(String.valueOf(key), start.x, start.y);
         }
     }
 
@@ -857,6 +934,17 @@ public class BoardClient extends javax.swing.JFrame {
      */
     public void notification(String text){
         JOptionPane.showMessageDialog(null, text, "Notification", JOptionPane.WARNING_MESSAGE);
+    }
+
+    /**
+     * update the board from manager's board
+     * @param bytes bytes of image file
+     * @throws IOException
+     */
+    public void updateBoard(byte[] bytes) throws IOException {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+        image = ImageIO.read(inputStream);
+        boardPanel.getGraphics().drawImage(image, 0, 0, null);
     }
 
 

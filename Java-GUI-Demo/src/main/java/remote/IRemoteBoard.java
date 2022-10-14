@@ -1,6 +1,7 @@
 package remote;
 
 import java.awt.*;
+import java.io.IOException;
 import java.rmi.*;
 import java.util.ArrayList;
 
@@ -32,10 +33,10 @@ public interface IRemoteBoard extends Remote{
 
     // For manager
     // create new white board
-    void newBoard() throws  RemoteException;
+    void newBoard(byte[] bytes) throws IOException;
 
     // open an existing white board
-    void openBoard(byte[] boardState) throws RemoteException;
+    void openBoard(byte[] boardState) throws IOException;
 
     // Close the white board
     void closeAllBoard() throws RemoteException;
@@ -47,7 +48,7 @@ public interface IRemoteBoard extends Remote{
     boolean checkName(String name) throws RemoteException;
 
     // update client's whiteboard and draw a line
-    void draw(String name, String mode, Point start, Point end, Color color) throws RemoteException;
+    void draw(String name, String mode, Point start, Point end, Color color, String text) throws RemoteException;
 
     // check empty client list
     boolean isEmpty() throws RemoteException;

@@ -9,6 +9,7 @@ import remote.IRemoteClient;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.rmi.AccessException;
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
@@ -109,8 +110,8 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
     }
 
     @Override
-    public void updateOpenBoard(byte[] boardState) throws RemoteException {
-
+    public void updateOpenBoard(byte[] bytes) throws IOException {
+        board.updateBoard(bytes);
     }
 
     @Override
@@ -144,13 +145,13 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
      * @throws RemoteException
      */
     @Override
-    public void draw(String mode, Point start, Point end, Color color) throws RemoteException {
+    public void draw(String mode, Point start, Point end, Color color, String text) throws RemoteException {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 System.out.println(name);
                 Graphics g = board.getBoardPanel().getGraphics();
-                board.remoteDraw(g, mode, start, end, color);
+                board.remoteDraw(g, mode, start, end, color, text);
             }
         });
         t.start();

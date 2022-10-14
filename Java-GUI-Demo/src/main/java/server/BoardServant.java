@@ -4,6 +4,7 @@ import remote.IRemoteBoard;
 import remote.IRemoteClient;
 
 import java.awt.*;
+import java.io.IOException;
 import java.rmi.*;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -102,15 +103,17 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
     }
 
     @Override
-    public void newBoard() throws RemoteException {
+    public void newBoard(byte[] bytes) throws IOException {
         for (IRemoteClient c: manager.getClientList()){
-            c.clearBoard();
+            if(!c.isManager()){
+                c.updateOpenBoard(bytes);
+            }
         }
 
     }
 
     @Override
-    public void openBoard(byte[] boardState) throws RemoteException {
+    public void openBoard(byte[] boardState) throws IOException {
         for (IRemoteClient c: manager.getClientList()){
             c.updateOpenBoard(boardState);
         }
@@ -174,10 +177,10 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
      * @throws RemoteException
      */
     @Override
-    public void draw(String name, String mode, Point start, Point end, Color color) throws RemoteException {
+    public void draw(String name, String mode, Point start, Point end, Color color, String text) throws RemoteException {
         for(IRemoteClient client: manager.getClientList()){
             if(!client.getName().equals(name)){
-                client.draw(mode, start, end, color);
+                client.draw(mode, start, end, color, text);
             }
         }
     }
