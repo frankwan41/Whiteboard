@@ -7,6 +7,8 @@ import java.awt.*;
 import java.rmi.*;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * White board server interface - shared between server and clients
@@ -66,11 +68,12 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
     }
 
     @Override
-    public void exitBoard(IRemoteClient client) throws RemoteException {
+    public void exitBoard(String name) throws RemoteException {
         for(IRemoteClient c: manager.getClientList()){
-            if (c.getName().equals(client.getName())){
+            if (c.getName().equals(name)){
                 manager.removeClient(c);
                 System.out.println(c.getName() + " leave the room!");
+                break;
             }
         }
         ArrayList<String> names = new ArrayList<>();
@@ -113,8 +116,10 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
     }
 
     @Override
-    public void closeBoard() throws RemoteException {
+    public void closeAllBoard() throws RemoteException {
+        Collections.reverse(manager.getClientList());
         for(IRemoteClient c: manager.getClientList()){
+            System.out.println("client name: " + c.getName());
             manager.removeClient(c);
             c.closeBoard();
         }

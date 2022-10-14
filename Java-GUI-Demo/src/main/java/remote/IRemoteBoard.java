@@ -22,7 +22,7 @@ public interface IRemoteBoard extends Remote{
     void joinBoard(IRemoteClient client, String name) throws RemoteException;
 
     // client exit and broadcast to all clients and refresh clients list
-    void exitBoard(IRemoteClient client) throws RemoteException;
+    void exitBoard(String name) throws RemoteException;
 
     // get peers list
     ArrayList<IRemoteClient> getPeerList() throws RemoteException;
@@ -38,7 +38,7 @@ public interface IRemoteBoard extends Remote{
     void openBoard(byte[] boardState) throws RemoteException;
 
     // Close the white board
-    void closeBoard() throws RemoteException;
+    void closeAllBoard() throws RemoteException;
 
     // Kick out a certain user
     void kickUser(String userName) throws RemoteException;

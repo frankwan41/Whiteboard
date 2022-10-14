@@ -175,7 +175,7 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
             @Override
             public void run() {
                 JOptionPane.showMessageDialog(null,"Sorry, you are not allowed to enter",  "Access denied!", JOptionPane.ERROR_MESSAGE);
-                board.dispose();
+                //board.dispose();
                 System.exit(0);
             }
         });
