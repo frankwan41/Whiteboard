@@ -93,7 +93,7 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
         /* Create and display the form */
         board = new BoardClient(remoteBoard, name, isManager);
         board.setVisible(true);
-        board.setSize(500,500);
+        board.setSize(700,500);
     }
 
     /**

@@ -75,7 +75,7 @@ public class BoardClient extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
+        modeGroup = new javax.swing.ButtonGroup();
         boardPanel = new javax.swing.JPanel();
         drawLabel = new javax.swing.JLabel();
         inputPanel = new javax.swing.JScrollPane();
@@ -101,13 +101,14 @@ public class BoardClient extends javax.swing.JFrame {
         drawRect = new javax.swing.JRadioButtonMenuItem();
         drawTri = new javax.swing.JRadioButtonMenuItem();
         drawCir = new javax.swing.JRadioButtonMenuItem();
-        freeDraw = new javax.swing.JMenuItem();
         colorMenu = new javax.swing.JMenu();
         colorChooser = new javax.swing.JMenuItem();
         textMenu = new javax.swing.JMenu();
-        drawText = new javax.swing.JMenuItem();
-        drawingMenu = new javax.swing.JMenu();
+        drawText = new javax.swing.JRadioButtonMenuItem();
+        freeDraw = new javax.swing.JMenu();
+        freeDrawButton = new javax.swing.JRadioButtonMenuItem();
         cursorMenu = new javax.swing.JMenu();
+        cursorButton = new javax.swing.JRadioButtonMenuItem();
         currentTool = new javax.swing.JMenu();
         currentColor = new javax.swing.JMenu();
 
@@ -124,7 +125,7 @@ public class BoardClient extends javax.swing.JFrame {
                 try {
                     boardPanelMouseDragged(evt);
                 } catch (RemoteException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             }
         });
@@ -139,7 +140,7 @@ public class BoardClient extends javax.swing.JFrame {
                 try {
                     boardPanelMouseReleased(evt);
                 } catch (RemoteException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             }
         });
@@ -182,7 +183,7 @@ public class BoardClient extends javax.swing.JFrame {
                 try {
                     sendButtonActionPerformed(evt);
                 } catch (RemoteException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             }
         });
@@ -208,7 +209,7 @@ public class BoardClient extends javax.swing.JFrame {
                 try {
                     userListMouseClicked(evt);
                 } catch (RemoteException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             }
         });
@@ -265,9 +266,11 @@ public class BoardClient extends javax.swing.JFrame {
         menuBar.setMinimumSize(new java.awt.Dimension(20, 20));
         menuBar.setPreferredSize(new java.awt.Dimension(300, 27));
 
+        fileMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/folder.png")); // NOI18N
         fileMenu.setText("File");
 
         newBoard.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        newBoard.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/newboard.png")); // NOI18N
         newBoard.setText("New Board");
         newBoard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -277,6 +280,7 @@ public class BoardClient extends javax.swing.JFrame {
         fileMenu.add(newBoard);
 
         fileSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        fileSave.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/save.png")); // NOI18N
         fileSave.setText("Save");
         fileSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -286,19 +290,21 @@ public class BoardClient extends javax.swing.JFrame {
         fileMenu.add(fileSave);
 
         fileSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        fileSaveAs.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/saveas.png")); // NOI18N
         fileSaveAs.setText("Save As");
         fileSaveAs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 try {
                     fileSaveAsActionPerformed(evt);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             }
         });
         fileMenu.add(fileSaveAs);
 
         fileClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        fileClose.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/close.png")); // NOI18N
         fileClose.setText("Close Board");
         fileClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -309,6 +315,7 @@ public class BoardClient extends javax.swing.JFrame {
 
         menuBar.add(fileMenu);
 
+        shapeMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/shape.png")); // NOI18N
         shapeMenu.setText("Shape");
         shapeMenu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -317,8 +324,9 @@ public class BoardClient extends javax.swing.JFrame {
         });
 
         drawLine.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        buttonGroup1.add(drawLine);
+        modeGroup.add(drawLine);
         drawLine.setText("Line");
+        drawLine.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/line.png")); // NOI18N
         drawLine.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 drawLineActionPerformed(evt);
@@ -327,8 +335,9 @@ public class BoardClient extends javax.swing.JFrame {
         shapeMenu.add(drawLine);
 
         drawRect.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        buttonGroup1.add(drawRect);
+        modeGroup.add(drawRect);
         drawRect.setText("Rectangle");
+        drawRect.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/rectangle.png")); // NOI18N
         drawRect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 drawRectActionPerformed(evt);
@@ -337,8 +346,9 @@ public class BoardClient extends javax.swing.JFrame {
         shapeMenu.add(drawRect);
 
         drawTri.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        buttonGroup1.add(drawTri);
+        modeGroup.add(drawTri);
         drawTri.setText("Triangle");
+        drawTri.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/triangle.png")); // NOI18N
         drawTri.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 drawTriActionPerformed(evt);
@@ -347,8 +357,9 @@ public class BoardClient extends javax.swing.JFrame {
         shapeMenu.add(drawTri);
 
         drawCir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        buttonGroup1.add(drawCir);
+        modeGroup.add(drawCir);
         drawCir.setText("Circle");
+        drawCir.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/circle.png")); // NOI18N
         drawCir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 drawCirActionPerformed(evt);
@@ -356,19 +367,12 @@ public class BoardClient extends javax.swing.JFrame {
         });
         shapeMenu.add(drawCir);
 
-        freeDraw.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        freeDraw.setText("FreeDraw");
-        freeDraw.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                freeDrawActionPerformed(evt);
-            }
-        });
-        shapeMenu.add(freeDraw);
-
         menuBar.add(shapeMenu);
 
+        colorMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/color.png")); // NOI18N
         colorMenu.setText("Color");
 
+        colorChooser.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/choosecolor.png")); // NOI18N
         colorChooser.setText("Choose");
         colorChooser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -379,6 +383,7 @@ public class BoardClient extends javax.swing.JFrame {
 
         menuBar.add(colorMenu);
 
+        textMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/text.png")); // NOI18N
         textMenu.setText("Text");
         textMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -386,22 +391,49 @@ public class BoardClient extends javax.swing.JFrame {
             }
         });
 
-        drawText.setText("drawText");
-        drawText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                drawTextActionPerformed(evt);
-            }
-        });
+        modeGroup.add(drawText);
+        drawText.setSelected(true);
+        drawText.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/drawtext.png")); // NOI18N
         textMenu.add(drawText);
 
         menuBar.add(textMenu);
 
-        drawingMenu.setPreferredSize(new java.awt.Dimension(56, 6));
-        menuBar.add(drawingMenu);
+        freeDraw.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/drawing.png")); // NOI18N
+        freeDraw.setText("Drawing");
+        freeDraw.setMaximumSize(new java.awt.Dimension(32767, 32767));
+        freeDraw.setMinimumSize(new java.awt.Dimension(85, 22));
+        freeDraw.setPreferredSize(new java.awt.Dimension(85, 22));
+
+        modeGroup.add(freeDrawButton);
+        freeDrawButton.setText("Free Draw");
+        freeDrawButton.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/freedraw.png")); // NOI18N
+        freeDrawButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                freeDrawButtonActionPerformed(evt);
+            }
+        });
+        freeDraw.add(freeDrawButton);
+
+        menuBar.add(freeDraw);
+
+        cursorMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/cursor.png")); // NOI18N
+        cursorMenu.setText("Cursor");
+
+        modeGroup.add(cursorButton);
+        cursorButton.setText("Mouse");
+        cursorButton.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/cursor.png")); // NOI18N
+        cursorButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cursorButtonActionPerformed(evt);
+            }
+        });
+        cursorMenu.add(cursorButton);
+
         menuBar.add(cursorMenu);
 
         currentTool.setBackground(java.awt.Color.lightGray);
         currentTool.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        currentTool.setText("current tool");
         currentTool.setOpaque(true);
         menuBar.add(currentTool);
 
@@ -603,16 +635,6 @@ public class BoardClient extends javax.swing.JFrame {
         color = JColorChooser.showDialog(null, "please choose a color", Color.black);
     }//GEN-LAST:event_colorChooserActionPerformed
 
-    private void drawTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawTextActionPerformed
-        // TODO add your handling code here:
-        mode = DRAWTEXT;
-    }//GEN-LAST:event_drawTextActionPerformed
-
-    private void freeDrawActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_freeDrawActionPerformed
-        // TODO add your handling code here:
-        mode = FREEDRAW;
-    }//GEN-LAST:event_freeDrawActionPerformed
-
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
         int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?", "exit", JOptionPane.YES_NO_OPTION);
@@ -634,6 +656,15 @@ public class BoardClient extends javax.swing.JFrame {
             start.setLocation(evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_boardPanelMouseClicked
+
+    private void freeDrawButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_freeDrawButtonActionPerformed
+        // TODO add your handling code here:
+        mode = FREEDRAW;
+    }//GEN-LAST:event_freeDrawButtonActionPerformed
+
+    private void cursorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cursorButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cursorButtonActionPerformed
 
     /**
      * paint the whiteboard
@@ -762,7 +793,6 @@ public class BoardClient extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel boardPanel;
-    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JScrollPane chatBoxPanel;
     private javax.swing.JLabel chatLabel;
     private javax.swing.JList<String> chatList;
@@ -772,23 +802,25 @@ public class BoardClient extends javax.swing.JFrame {
     private javax.swing.JMenu colorMenu;
     private javax.swing.JMenu currentColor;
     private javax.swing.JMenu currentTool;
+    private javax.swing.JRadioButtonMenuItem cursorButton;
     private javax.swing.JMenu cursorMenu;
     private javax.swing.JRadioButtonMenuItem drawCir;
     private javax.swing.JLabel drawLabel;
     private javax.swing.JRadioButtonMenuItem drawLine;
     private javax.swing.JRadioButtonMenuItem drawRect;
-    private javax.swing.JMenuItem drawText;
+    private javax.swing.JRadioButtonMenuItem drawText;
     private javax.swing.JRadioButtonMenuItem drawTri;
-    private javax.swing.JMenu drawingMenu;
     private javax.swing.JMenuItem fileClose;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem fileSave;
     private javax.swing.JMenuItem fileSaveAs;
-    private javax.swing.JMenuItem freeDraw;
+    private javax.swing.JMenu freeDraw;
+    private javax.swing.JRadioButtonMenuItem freeDrawButton;
     private javax.swing.JTextArea inputArea;
     private javax.swing.JScrollPane inputPanel;
     private javax.swing.JPanel listPanel;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.ButtonGroup modeGroup;
     private javax.swing.JMenuItem newBoard;
     private javax.swing.JButton sendButton;
     private javax.swing.JMenu shapeMenu;
