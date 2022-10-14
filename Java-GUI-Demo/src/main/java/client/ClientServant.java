@@ -229,4 +229,21 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
     public void addMessage(String text) throws RemoteException {
         board.addMessage(text);
     }
+
+    /**
+     * notify every client a client is kicked out
+     * @param text message
+     * @throws RemoteException
+     */
+    @Override
+    public void notification(String text) throws RemoteException {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                board.notification(text);
+            }
+        });
+        t.start();
+
+    }
 }

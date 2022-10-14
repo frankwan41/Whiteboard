@@ -142,6 +142,7 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
         }
         for (IRemoteClient c: manager.getClientList()){
             c.updateClientList(names);
+            c.notification(userName + " is kicked out by manager");
         }
     }
 

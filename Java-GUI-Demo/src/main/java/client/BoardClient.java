@@ -836,6 +836,14 @@ public class BoardClient extends javax.swing.JFrame {
         chatModel.addElement(text);
     }
 
+    /**
+     * notify every client a client is kicked out
+     * @param text message
+     */
+    public void notification(String text){
+        JOptionPane.showMessageDialog(null, text, "Notification", JOptionPane.WARNING_MESSAGE);
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel boardPanel;
