@@ -770,8 +770,9 @@ public class BoardClient extends javax.swing.JFrame {
         fileDialog.setVisible(true);
         if (fileDialog.getFile() != null) {
             // read image file and convert it to bytes and send to others
-            this.image = ImageIO.read(new File(fileDialog.getDirectory() + fileDialog.getFile()));
-            g = image.getGraphics();
+            BufferedImage image = ImageIO.read(new File(fileDialog.getDirectory() + fileDialog.getFile()));
+            resetBoard();
+            g.drawImage(image, 0, 0, null);
             boardPanel.getGraphics().drawImage(image, 0, 0, null);
             ByteArrayOutputStream imageArray = new ByteArrayOutputStream();
             ImageIO.write(image, "png", imageArray);
@@ -938,8 +939,9 @@ public class BoardClient extends javax.swing.JFrame {
      */
     public void updateBoard(byte[] bytes) throws IOException {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-        image = ImageIO.read(inputStream);
-        g = image.getGraphics();
+        BufferedImage image = ImageIO.read(inputStream);
+        resetBoard();
+        g.drawImage(image, 0, 0, null);
         boardPanel.getGraphics().drawImage(image, 0, 0, null);
     }
 
