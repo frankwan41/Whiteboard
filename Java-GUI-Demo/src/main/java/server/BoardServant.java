@@ -28,7 +28,6 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
     /**
      * client joins the board
      * @param client client remote class
-     * @throws RemoteException
      */
     @Override
     public void joinBoard(IRemoteClient client, String name) throws RemoteException {
@@ -47,6 +46,13 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
                 if(access) {
                     manager.addClient(client);
                     client.createBoard(this,name, false);
+                    // get current board
+                    try {
+                        client.updateOpenBoard(currentBoard());
+                    }catch (IOException e){
+                        e.printStackTrace();
+                        System.exit(1);
+                    }
                     System.out.println("Client "+name+" join the board!");
                 }else {
                     client.closeBoard(access);
@@ -96,7 +102,7 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
     }
 
     @Override
-    public byte[] currentBoard() throws RemoteException {
+    public byte[] currentBoard() throws IOException {
         // get the current board state of the manager
         IRemoteClient the_manager = manager.getClientList().get(0);
         byte[] currentState = the_manager.getCurrentBoard();
@@ -105,10 +111,10 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
     }
 
     @Override
-    public void newBoard(byte[] bytes) throws IOException {
+    public void newBoard() throws RemoteException {
         for (IRemoteClient c: manager.getClientList()){
             if(!c.isManager()){
-                c.updateOpenBoard(bytes);
+                c.clearBoard();
             }
         }
 
@@ -117,7 +123,9 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
     @Override
     public void openBoard(byte[] boardState) throws IOException {
         for (IRemoteClient c: manager.getClientList()){
-            c.updateOpenBoard(boardState);
+            if(!c.isManager()){
+                c.updateOpenBoard(boardState);
+            }
         }
     }
 

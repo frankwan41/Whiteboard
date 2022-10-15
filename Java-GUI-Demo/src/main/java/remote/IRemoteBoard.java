@@ -29,11 +29,11 @@ public interface IRemoteBoard extends Remote{
     ArrayList<IRemoteClient> getPeerList() throws RemoteException;
 
     // the new client should obtain the current state of the white board
-    byte[] currentBoard() throws RemoteException;
+    byte[] currentBoard() throws IOException;
 
     // For manager
     // create new white board
-    void newBoard(byte[] bytes) throws IOException;
+    void newBoard() throws IOException;
 
     // open an existing white board
     void openBoard(byte[] boardState) throws IOException;

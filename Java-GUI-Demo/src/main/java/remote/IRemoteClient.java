@@ -30,11 +30,8 @@ public interface IRemoteClient extends Remote{
 
     void createBoard(IRemoteBoard remoteBoard, String name, boolean isManager) throws RemoteException;
 
-    // update self board while other clients did the drawing
-    //void updateBoard(IRemoteMessage message) throws RemoteException;
-
     // get the current white board state(for client who join the board will get the current board state)
-    byte[] getCurrentBoard() throws  RemoteException;
+    byte[] getCurrentBoard() throws IOException;
 
     // invoke when manager "new" the white board, clear all board drawing
     void clearBoard() throws  RemoteException;

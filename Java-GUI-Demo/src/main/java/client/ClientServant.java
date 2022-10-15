@@ -100,13 +100,13 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
     }
 
     @Override
-    public byte[] getCurrentBoard() throws RemoteException {
-        return new byte[0];
+    public byte[] getCurrentBoard() throws IOException {
+        return board.getCurrentBoard();
     }
 
     @Override
     public void clearBoard() throws RemoteException {
-
+        board.resetBoard();
     }
 
     @Override
@@ -158,8 +158,7 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
             @Override
             public void run() {
                 System.out.println(name);
-                Graphics g = board.getBoardPanel().getGraphics();
-                board.remoteDraw(g, mode, start, end, color, text);
+                board.remoteDraw(mode, start, end, color, text);
             }
         });
         t.start();
