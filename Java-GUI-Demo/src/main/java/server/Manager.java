@@ -20,7 +20,6 @@ public class Manager {
             this.clientList = new ArrayList<>();
         }
         this.clientList.add(client);
-        System.out.println(this.clientList.size());
     }
 
     public ArrayList<IRemoteClient> getClientList() {

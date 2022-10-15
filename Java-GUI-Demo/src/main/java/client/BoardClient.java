@@ -5,8 +5,6 @@
 package client;
 
 import remote.IRemoteBoard;
-import remote.IRemoteClient;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -15,10 +13,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.rmi.ConnectException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 
 /**
  *
@@ -289,11 +285,11 @@ public class BoardClient extends javax.swing.JFrame {
         if (!isManager) {
             fileMenu.setVisible(false);
         }
-        fileMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/folder.png")); // NOI18N
+        fileMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/folder.png"))); // NOI18N
         fileMenu.setText("File");
 
         newBoard.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        newBoard.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/newboard.png")); // NOI18N
+        newBoard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/newboard.png"))); // NOI18N
         newBoard.setText("New Board");
         newBoard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -307,41 +303,50 @@ public class BoardClient extends javax.swing.JFrame {
         fileMenu.add(newBoard);
 
         fileOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        fileOpen.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/openfile.png")); // NOI18N
+        fileOpen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/openfile.png"))); // NOI18N
         fileOpen.setText("Open");
         fileOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 try {
                     fileOpenActionPerformed(evt);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    JOptionPane.showMessageDialog(null,"The file you want to " +
+                            "open does not exist!","no file",JOptionPane.WARNING_MESSAGE);
+//                    throw new RuntimeException(e);
                 }
             }
         });
         fileMenu.add(fileOpen);
 
         fileSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        fileSave.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/save.png")); // NOI18N
+        fileSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/save.png"))); // NOI18N
         fileSave.setText("Save");
         fileSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileSaveActionPerformed(evt);
+                try {
+                    fileSaveActionPerformed(evt);
+                }catch (NullPointerException e){
+
+                }
             }
         });
         fileMenu.add(fileSave);
 
         fileSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        fileSaveAs.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/saveas.png")); // NOI18N
+        fileSaveAs.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/saveas.png"))); // NOI18N
         fileSaveAs.setText("Save As");
         fileSaveAs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileSaveAsActionPerformed(evt);
+                try{
+                    fileSaveAsActionPerformed(evt);
+                }catch (NullPointerException e){
+                }
             }
         });
         fileMenu.add(fileSaveAs);
 
         fileClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        fileClose.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/close.png")); // NOI18N
+        fileClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/close.png"))); // NOI18N
         fileClose.setText("Close Board");
         fileClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -352,7 +357,7 @@ public class BoardClient extends javax.swing.JFrame {
 
         menuBar.add(fileMenu);
 
-        shapeMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/shape.png")); // NOI18N
+        shapeMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/shape.png"))); // NOI18N
         shapeMenu.setText("Shape");
         shapeMenu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -363,7 +368,7 @@ public class BoardClient extends javax.swing.JFrame {
         drawLine.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         modeGroup.add(drawLine);
         drawLine.setText("Line");
-        drawLine.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/line.png")); // NOI18N
+        drawLine.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/line.png"))); // NOI18N
         drawLine.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 drawLineActionPerformed(evt);
@@ -374,7 +379,7 @@ public class BoardClient extends javax.swing.JFrame {
         drawRect.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         modeGroup.add(drawRect);
         drawRect.setText("Rectangle");
-        drawRect.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/rectangle.png")); // NOI18N
+        drawRect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/rectangle.png"))); // NOI18N
         drawRect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 drawRectActionPerformed(evt);
@@ -385,7 +390,7 @@ public class BoardClient extends javax.swing.JFrame {
         drawTri.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         modeGroup.add(drawTri);
         drawTri.setText("Triangle");
-        drawTri.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/triangle.png")); // NOI18N
+        drawTri.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/triangle.png"))); // NOI18N
         drawTri.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 drawTriActionPerformed(evt);
@@ -396,7 +401,7 @@ public class BoardClient extends javax.swing.JFrame {
         drawCir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         modeGroup.add(drawCir);
         drawCir.setText("Circle");
-        drawCir.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/circle.png")); // NOI18N
+        drawCir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/circle.png"))); // NOI18N
         drawCir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 drawCirActionPerformed(evt);
@@ -406,10 +411,10 @@ public class BoardClient extends javax.swing.JFrame {
 
         menuBar.add(shapeMenu);
 
-        colorMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/color.png")); // NOI18N
+        colorMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/color.png"))); // NOI18N
         colorMenu.setText("Color");
 
-        colorChooser.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/choosecolor.png")); // NOI18N
+        colorChooser.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/choosecolor.png"))); // NOI18N
         colorChooser.setText("Choose");
         colorChooser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -420,7 +425,7 @@ public class BoardClient extends javax.swing.JFrame {
 
         menuBar.add(colorMenu);
 
-        textMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/text.png")); // NOI18N
+        textMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/text.png"))); // NOI18N
         textMenu.setText("Text");
         textMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -430,7 +435,7 @@ public class BoardClient extends javax.swing.JFrame {
 
         modeGroup.add(drawText);
         drawText.setSelected(false);
-        drawText.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/drawtext.png")); // NOI18N
+        drawText.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/drawtext.png"))); // NOI18N
         drawText.setSelected(true);
         drawText.setText("drawText");
         drawText.addActionListener(new java.awt.event.ActionListener() {
@@ -442,7 +447,7 @@ public class BoardClient extends javax.swing.JFrame {
 
         menuBar.add(textMenu);
 
-        freeDraw.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/drawing.png")); // NOI18N
+        freeDraw.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/drawing.png"))); // NOI18N
         freeDraw.setText("Drawing");
 //        freeDraw.setMaximumSize(new java.awt.Dimension(3200, 3200));
 //        freeDraw.setMinimumSize(new java.awt.Dimension(85, 22));
@@ -450,7 +455,7 @@ public class BoardClient extends javax.swing.JFrame {
 
         modeGroup.add(freeDrawButton);
         freeDrawButton.setText("Free Draw");
-        freeDrawButton.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/freedraw.png")); // NOI18N
+        freeDrawButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/freedraw.png"))); // NOI18N
         freeDrawButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 freeDrawButtonActionPerformed(evt);
@@ -460,12 +465,12 @@ public class BoardClient extends javax.swing.JFrame {
 
         menuBar.add(freeDraw);
 
-        cursorMenu.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/cursor.png")); // NOI18N
+        cursorMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/cursor.png"))); // NOI18N
         cursorMenu.setText("Cursor");
 
         modeGroup.add(cursorButton);
         cursorButton.setText("Mouse");
-        cursorButton.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/cursor.png")); // NOI18N
+        cursorButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/cursor.png"))); // NOI18N
         cursorButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cursorButtonActionPerformed(evt);
@@ -534,15 +539,17 @@ public class BoardClient extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void fileSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileSaveActionPerformed
+    private void fileSaveActionPerformed(java.awt.event.ActionEvent evt) throws NullPointerException{//GEN-FIRST:event_fileSaveActionPerformed
         // TODO add your handling code here:
         if(fileName == null){
             fileName = JOptionPane.showInputDialog(null, "You haven't save the file yet, please" +
                     " enter a file name");
             while (fileName == null || fileName.equals("")){
-                JOptionPane.showMessageDialog(null, "Can't enter empty name!");
-                fileName = JOptionPane.showInputDialog(null, "You haven't save the file yet, please " +
-                        "enter a file name");
+                if (fileName.equals("")) {
+                    JOptionPane.showMessageDialog(null, "Can't enter empty name!");
+                    fileName = JOptionPane.showInputDialog(null, "You haven't save the file yet, please " +
+                            "enter a file name");
+                }
             }
         }
         try {
@@ -556,32 +563,42 @@ public class BoardClient extends javax.swing.JFrame {
                 "in the current directory!","Success",JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_fileSaveActionPerformed
 
-    private void fileSaveAsActionPerformed(java.awt.event.ActionEvent evt){//GEN-FIRST:event_fileSaveAsActionPerformed
+    private void fileSaveAsActionPerformed(java.awt.event.ActionEvent evt)throws NullPointerException{//GEN-FIRST:event_fileSaveAsActionPerformed
         // TODO add your handling code here:
         String name = JOptionPane.showInputDialog(null, "Enter a file name");
-        while (name == null || name.equals("")){
-            JOptionPane.showMessageDialog(null, "Can't enter empty name!");
-            name = JOptionPane.showInputDialog(null, "Enter a file name");
+        while (name == null | name.equals("")) {
+            if (name.equals("")) {
+                JOptionPane.showMessageDialog(null, "Can't enter empty name!");
+                name = JOptionPane.showInputDialog(null, "Enter a file name");
+            }
         }
         try {
             fileName = name;
             File outputfile = new File(name + ".png");
             ImageIO.write(image, "png", outputfile);
-        }catch (IOException e){
-            JOptionPane.showMessageDialog(null,"Seems something wrong occurred when you " +
-                    "save your file, please try again!","Fail",JOptionPane.WARNING_MESSAGE);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Seems something wrong occurred when you " +
+                    "save your file, please try again!", "Fail", JOptionPane.WARNING_MESSAGE);
         }
-        JOptionPane.showMessageDialog(null,"You successfully saved your file " +
-                "in the current directory!","Success",JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, "You successfully saved your file " +
+                "in the current directory!", "Success", JOptionPane.INFORMATION_MESSAGE);
 
     }//GEN-LAST:event_fileSaveAsActionPerformed
 
     private void fileCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileCloseActionPerformed
         // TODO add your handling code here:
-        int option = JOptionPane.showConfirmDialog(null, "Have you saved your board?", "Confirm", JOptionPane.YES_NO_OPTION);
-        if(option == 0){
-            dispose();
-            System.exit(0);
+        int option = JOptionPane.showConfirmDialog(null, "You are manager! " +
+                        "All user will be removed if you close the board! Are you sure you want to exit?", "exit",
+                JOptionPane.YES_NO_OPTION);
+        if (option == JOptionPane.YES_OPTION) {
+            //dispose();
+            try {
+                // Manager quit, close all clients board
+                remoteBoard.closeAllBoard(name);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null,"The application occurred an error " +
+                        "when manager close the application","ERROR",JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_fileCloseActionPerformed
 
@@ -604,14 +621,11 @@ public class BoardClient extends javax.swing.JFrame {
     private void drawLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawLineActionPerformed
         // TODO add your handling code here:
         mode = DRAWLINE;
-        System.out.println("mode is: "+mode);
-        System.out.println("start: "+start+"end: "+end);
     }//GEN-LAST:event_drawLineActionPerformed
 
     private void drawCirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawCirActionPerformed
         // TODO add your handling code here:
         mode = DRAWCIRCLE;
-        System.out.println("mode is "+mode);
     }//GEN-LAST:event_drawCirActionPerformed
 
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
@@ -626,7 +640,6 @@ public class BoardClient extends javax.swing.JFrame {
     private void boardPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boardPanelMousePressed
         // TODO add your handling code here:
         start.setLocation(evt.getX(), evt.getY());
-        System.out.println("press start: "+start+"  "+"press end: " + end);
     }//GEN-LAST:event_boardPanelMousePressed
 
     private void boardPanelMouseReleased(java.awt.event.MouseEvent evt) throws RemoteException {//GEN-FIRST:event_boardPanelMouseReleased
@@ -700,7 +713,6 @@ public class BoardClient extends javax.swing.JFrame {
 
     private void colorChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorChooserActionPerformed
         // TODO add your handling code here:
-        JColorChooser colorChooser = new JColorChooser();
         color = JColorChooser.showDialog(null, "please choose a color", Color.black);
         currentColor.setBackground(color);
     }//GEN-LAST:event_colorChooserActionPerformed
@@ -719,7 +731,8 @@ public class BoardClient extends javax.swing.JFrame {
                     // Manager quit, close all clients board
                     remoteBoard.closeAllBoard(name);
                 } catch (IOException e) {
-                    System.out.println("The application occurred an error when manager close the application");
+                    JOptionPane.showMessageDialog(null,"The application occurred an error " +
+                            "when manager close the application","ERROR",JOptionPane.ERROR_MESSAGE);
                 }
             }
         }else{
@@ -767,16 +780,23 @@ public class BoardClient extends javax.swing.JFrame {
     private void fileOpenActionPerformed(java.awt.event.ActionEvent evt) throws IOException {//GEN-FIRST:event_fileOpenActionPerformed
         // TODO add your handling code here:
         FileDialog fileDialog = new FileDialog(this, "open an image", FileDialog.LOAD);
+        String currentDirectory = System.getProperty("user.dir");
+        fileDialog.setDirectory(currentDirectory);
         fileDialog.setVisible(true);
         if (fileDialog.getFile() != null) {
-            // read image file and convert it to bytes and send to others
-            BufferedImage image = ImageIO.read(new File(fileDialog.getDirectory() + fileDialog.getFile()));
-            resetBoard();
-            g.drawImage(image, 0, 0, null);
-            boardPanel.getGraphics().drawImage(image, 0, 0, null);
-            ByteArrayOutputStream imageArray = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", imageArray);
-            remoteBoard.openBoard(imageArray.toByteArray());
+            if (!fileDialog.getFile().endsWith(".png")) {
+                JOptionPane.showMessageDialog(null, "Incorrect file type, " +
+                        "You must open an file with png suffix!", "Wrong file type", JOptionPane.ERROR_MESSAGE);
+            } else {
+                // read image file and convert it to bytes and send to others
+                BufferedImage image = ImageIO.read(new File(fileDialog.getDirectory() + fileDialog.getFile()));
+                resetBoard();
+                g.drawImage(image, 0, 0, null);
+                boardPanel.getGraphics().drawImage(image, 0, 0, null);
+                ByteArrayOutputStream imageArray = new ByteArrayOutputStream();
+                ImageIO.write(image, "png", imageArray);
+                remoteBoard.openBoard(imageArray.toByteArray());
+            }
         }
 
     }//GEN-LAST:event_fileOpenActionPerformed
@@ -792,34 +812,26 @@ public class BoardClient extends javax.swing.JFrame {
      */
     //@Override
     public void draw(Graphics g){
-        System.out.println("enter");
         g.setColor(color);
         //this.g2d.setColor(color);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setStroke(new BasicStroke(2));
         if(mode.equals(FREEDRAW)){
             g2d.drawLine(start.x, start.y, end.x, end.y);
-            //this.g2d.drawLine(start.x, start.y, end.x, end.y);
-            System.out.println("draw successful");
         }else if(mode.equals(DRAWLINE)){
             g2d.drawLine(start.x, start.y, end.x, end.y);
-            System.out.println("draw local line successful");
         }else if(mode.equals(DRAWREC)){
             g2d.drawRect(startPoint().x, startPoint().y, Math.abs(start.x - end.x), Math.abs(start.y - end.y));
-            System.out.println("draw rectangle successful");
         }else if(mode.equals(DRAWCIRCLE)){
             g2d.drawOval(startPoint().x, startPoint().y, Math.abs(start.x - end.x), Math.abs(start.y - end.y));
-            System.out.println("draw circle successful");
         }else if(mode.equals(DRAWTRI)){
             int[] xPoints = {start.x, end.x, Math.min(start.x, end.x) - Math.abs(start.x - end.x)};
             int[] yPoints = {start.y, end.y, end.y};
             g2d.drawPolygon(xPoints, yPoints, 3);
-            System.out.println("draw triangle successful");
         } else if(mode.equals(DRAWTEXT)){
             textDraw = JOptionPane.showInputDialog(null, "Please input text");
             if(textDraw != null){
                 g2d.drawString(textDraw, start.x, start.y);
-                System.out.println("draw text successful");
             }
         }
         boardPanel.getGraphics().drawImage(image, 0, 0, null);
@@ -838,28 +850,21 @@ public class BoardClient extends javax.swing.JFrame {
         remoteEnd.setLocation(end);
         remoteTextDraw = text;
         g.setColor(remoteColor);
-        System.out.println("enter remote");
         if(remoteMode.equals(FREEDRAW)){
             g.drawLine(remoteStart.x, remoteStart.y, remoteEnd.x, remoteEnd.y);
-            System.out.println("draw successful");
         }else if(remoteMode.equals(DRAWLINE)){
             g.drawLine(remoteStart.x, remoteStart.y, remoteEnd.x, remoteEnd.y);
-            System.out.println("draw remote line successful");
         }else if(remoteMode.equals(DRAWREC)){
             g.drawRect(remoteStartPoint().x, remoteStartPoint().y, Math.abs(remoteStart.x - remoteEnd.x), Math.abs(remoteStart.y - remoteEnd.y));
-            System.out.println("draw rectangle successful");
         }else if(remoteMode.equals(DRAWCIRCLE)){
             g.drawOval(remoteStartPoint().x, remoteStartPoint().y, Math.abs(remoteStart.x - remoteEnd.x), Math.abs(remoteStart.y - remoteEnd.y));
-            System.out.println("draw circle successful");
         }else if(remoteMode.equals(DRAWTRI)) {
             int[] xPoints = {remoteStart.x, remoteEnd.x, Math.min(remoteStart.x, remoteEnd.x) - Math.abs(remoteStart.x - remoteEnd.x)};
             int[] yPoints = {remoteStart.y, remoteEnd.y, remoteEnd.y};
             g.drawPolygon(xPoints, yPoints, 3);
-            System.out.println("draw triangle successful");
         }else if(mode.equals(DRAWTEXT)){
             if(remoteTextDraw != null){
                 g.drawString(remoteTextDraw, start.x, start.y);
-                System.out.println("draw text successful");
             }
         }
         boardPanel.getGraphics().drawImage(image, 0, 0, null);
