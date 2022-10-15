@@ -43,7 +43,7 @@ public interface IRemoteClient extends Remote{
     void updateOpenBoard(byte[] bytes) throws IOException;
 
     // invoke when the manager "close" the board
-    void closeBoard() throws RemoteException;
+    void closeBoard(boolean access) throws RemoteException;
 
     // check if client is a manager
     boolean isManager() throws RemoteException;
@@ -59,4 +59,5 @@ public interface IRemoteClient extends Remote{
 
     // notify every client that a client is kicked out
     void notification(String text) throws RemoteException;
+
 }

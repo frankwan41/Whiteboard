@@ -115,16 +115,24 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
     }
 
     @Override
-    public void closeBoard() throws RemoteException {
+    public void closeBoard(boolean access) throws RemoteException {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                JOptionPane.showMessageDialog(null,"Sorry, you are not allowed to enter",  "Access denied!", JOptionPane.ERROR_MESSAGE);
-                //board.dispose();
+                if (!isManager) {
+                    if (access) {
+                        JOptionPane.showMessageDialog(null, "Sorry, you are kicked " +
+                                "out by the manager or the manager left the room", "Access denied!", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Sorry, you are not allowed to enter", "Access denied!", JOptionPane.ERROR_MESSAGE);
+                        //board.dispose();
+                    }
+                }
                 System.exit(0);
             }
         });
         t.start();
+
     }
 
     /**

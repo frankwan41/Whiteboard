@@ -38,12 +38,20 @@ public class JoinWhiteBoard {
             }else{
                 // create board and check if client is a manager
                 if(!remoteBoard.isEmpty()){
-
+                    Thread t = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            JOptionPane.showMessageDialog(null,"Please wait the manager to " +
+                                    "grant you access!","Wait",JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    });
+                    t.start();
+//                    JOptionPane.showMessageDialog(null,"Please wait the manager to " +
+//                                    "grant you access!","Wait",JOptionPane.INFORMATION_MESSAGE);
                     remoteBoard.joinBoard(client, clientName);
-
                 }else{
                     JOptionPane.showMessageDialog(null,
-                            "The manager is missing, the board seems have an error!", "Warning!",
+                            "The manager is missing, the board haven't start yet!", "Warning!",
                             JOptionPane.ERROR_MESSAGE);
                     System.exit(1);
 
@@ -56,7 +64,8 @@ public class JoinWhiteBoard {
             JOptionPane.showMessageDialog(null,"The port already in use or port number is incorrect",  "Warning!", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         } catch (RemoteException e) {
-            JOptionPane.showMessageDialog(null,"Lost connection to RMI",  "Warning!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,"Lost connection to RMI or your port number is incorrect",
+                    "Warning!", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         } catch (NullPointerException e){
             JOptionPane.showMessageDialog(null,"Some variables are null",  "Warning!", JOptionPane.ERROR_MESSAGE);

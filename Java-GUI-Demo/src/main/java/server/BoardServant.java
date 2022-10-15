@@ -1,5 +1,6 @@
 package server;
 
+import org.junit.experimental.theories.Theories;
 import remote.IRemoteBoard;
 import remote.IRemoteClient;
 
@@ -18,6 +19,7 @@ import java.util.Collections;
 
 public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
     private  Manager manager;
+    boolean access = false;
 
     public BoardServant() throws RemoteException{
         this.manager = new Manager();
@@ -30,12 +32,11 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
      */
     @Override
     public void joinBoard(IRemoteClient client, String name) throws RemoteException {
-        boolean access = false;
         if(this.manager.getClientList() == null){
             // make the first client being the manager and add to the client list
             client.setManager(name + "(manager)");
             this.manager.addClient(client);
-
+            System.out.println("Manager "+name+ " create thr board!");
         }else{
             // client need to ask manager to join the white board
             try{
@@ -46,8 +47,9 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
                 if(access) {
                     manager.addClient(client);
                     client.createBoard(this,name, false);
+                    System.out.println("Client "+name+" join the board!");
                 }else {
-                    client.closeBoard();
+                    client.closeBoard(access);
                     return;
                 }
             }catch (Exception e){
@@ -74,7 +76,7 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
         for(IRemoteClient c: manager.getClientList()){
             if (c.getName().equals(name)){
                 manager.removeClient(c);
-                System.out.println(c.getName() + " leave the room!");
+                System.out.println("Client " + c.getName() + " leave the room!");
                 break;
             }
         }
@@ -120,12 +122,17 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
     }
 
     @Override
-    public void closeAllBoard() throws RemoteException {
+    public void closeAllBoard(String managerName) throws RemoteException {
+
         Collections.reverse(manager.getClientList());
-        for(IRemoteClient c: manager.getClientList()){
-            System.out.println("client name: " + c.getName());
+        ArrayList<IRemoteClient> clientList = new ArrayList<>(manager.getClientList());
+        for(IRemoteClient c: clientList){
             manager.removeClient(c);
-            c.closeBoard();
+            if (c.getName().equals(managerName)){
+                this.manager = new Manager();
+                System.out.println("The manager '"+managerName+ "' quit, all clients are removed!");
+            }
+            c.closeBoard(true);
         }
 
     }
@@ -135,8 +142,8 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
         for (IRemoteClient c: manager.getClientList()){
             if(c.getName().equals(userName)){
                 manager.removeClient(c);
-                System.out.println(userName + "is kicked out by manager!");
-                c.closeBoard();
+                System.out.println("Client " + userName + " is kicked out by manager!");
+                c.closeBoard(true);
                 break;
             }
         }
@@ -224,4 +231,5 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
             //}
         }
     }
+
 }

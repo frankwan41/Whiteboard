@@ -37,7 +37,7 @@ public class CreateWhiteBoard {
             }else{
                 // create board and check if client is a manager
                 if(remoteBoard.isEmpty()){
-                    manager.createBoard(remoteBoard, mangerName+" (manager)", true);
+                    manager.createBoard(remoteBoard, mangerName+"(manager)", true);
                     // add client to the server list
                     remoteBoard.joinBoard(manager, mangerName);
                 }else{
@@ -56,7 +56,7 @@ public class CreateWhiteBoard {
             JOptionPane.showMessageDialog(null,"The port already in use or port number is incorrect",  "Warning!", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         } catch (RemoteException e) {
-            JOptionPane.showMessageDialog(null,"lost connection to RMI",  "Warning!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,"Lost connection to RMI",  "Warning!", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         } catch (NullPointerException e){
             JOptionPane.showMessageDialog(null,"Some variables are null",  "Warning!", JOptionPane.ERROR_MESSAGE);

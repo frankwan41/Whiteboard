@@ -12,8 +12,7 @@ public class Manager {
     private ArrayList<String> messages;
 
     public void Manager(){
-        //this.clientList = new ArrayList<>();
-        //messages = new ArrayList<>();
+
     }
 
     public void addClient(IRemoteClient client){

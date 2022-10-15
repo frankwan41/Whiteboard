@@ -39,7 +39,7 @@ public interface IRemoteBoard extends Remote{
     void openBoard(byte[] boardState) throws IOException;
 
     // Close the white board
-    void closeAllBoard() throws RemoteException;
+    void closeAllBoard(String managerName) throws RemoteException;
 
     // Kick out a certain user
     void kickUser(String userName) throws RemoteException;
@@ -52,4 +52,5 @@ public interface IRemoteBoard extends Remote{
 
     // check empty client list
     boolean isEmpty() throws RemoteException;
+
 }

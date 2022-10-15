@@ -41,6 +41,7 @@ public class BoardClient extends javax.swing.JFrame {
     public final String DRAWCIRCLE = "drawCircle";
     public final String DRAWTRI = "drawTri";
     public final String DRAWTEXT = "drawText";
+    public final String NOTHING = "";
     private String name;
     private Color color;
     private Color remoteColor;
@@ -125,7 +126,7 @@ public class BoardClient extends javax.swing.JFrame {
         currentTool = new javax.swing.JMenu();
         currentColor = new javax.swing.JMenu();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -322,11 +323,7 @@ public class BoardClient extends javax.swing.JFrame {
         fileSave.setText("Save");
         fileSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                try {
-                    fileSaveActionPerformed(evt);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                fileSaveActionPerformed(evt);
             }
         });
         fileMenu.add(fileSave);
@@ -336,11 +333,7 @@ public class BoardClient extends javax.swing.JFrame {
         fileSaveAs.setText("Save As");
         fileSaveAs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                try {
-                    fileSaveAsActionPerformed(evt);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                fileSaveAsActionPerformed(evt);
             }
         });
         fileMenu.add(fileSaveAs);
@@ -449,8 +442,9 @@ public class BoardClient extends javax.swing.JFrame {
 
         freeDraw.setIcon(new javax.swing.ImageIcon("/Users/ycw/Desktop/distributed system/Project2/Whiteboard/Java-GUI-Demo/src/main/java/icon/drawing.png")); // NOI18N
         freeDraw.setText("Drawing");
-        freeDraw.setMinimumSize(new java.awt.Dimension(85, 22));
-        freeDraw.setPreferredSize(new java.awt.Dimension(85, 22));
+//        freeDraw.setMaximumSize(new java.awt.Dimension(3200, 3200));
+//        freeDraw.setMinimumSize(new java.awt.Dimension(85, 22));
+//        freeDraw.setPreferredSize(new java.awt.Dimension(85, 22));
 
         modeGroup.add(freeDrawButton);
         freeDrawButton.setText("Free Draw");
@@ -538,29 +532,45 @@ public class BoardClient extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void fileSaveActionPerformed(java.awt.event.ActionEvent evt) throws IOException {//GEN-FIRST:event_fileSaveActionPerformed
+    private void fileSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileSaveActionPerformed
         // TODO add your handling code here:
         if(fileName == null){
-            fileName = JOptionPane.showInputDialog(null, "Enter a file name");
+            fileName = JOptionPane.showInputDialog(null, "You haven't save the file yet, please" +
+                    " enter a file name");
             while (fileName == null || fileName.equals("")){
                 JOptionPane.showMessageDialog(null, "Can't enter empty name!");
-                fileName = JOptionPane.showInputDialog(null, "Enter a file name");
+                fileName = JOptionPane.showInputDialog(null, "You haven't save the file yet, please " +
+                        "enter a file name");
             }
         }
-        File outputfile = new File(fileName);
-        ImageIO.write(image, "png", outputfile);
+        try {
+            File outputfile = new File(fileName);
+            ImageIO.write(image, "png", outputfile);
+        }catch (IOException e){
+            JOptionPane.showMessageDialog(null,"Seems something wrong occurred when you " +
+                    "save your file, please try again!","Fail",JOptionPane.WARNING_MESSAGE);
+        }
+        JOptionPane.showMessageDialog(null,"You successfully saved your file " +
+                "in the current directory!","Success",JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_fileSaveActionPerformed
 
-    private void fileSaveAsActionPerformed(java.awt.event.ActionEvent evt) throws IOException {//GEN-FIRST:event_fileSaveAsActionPerformed
+    private void fileSaveAsActionPerformed(java.awt.event.ActionEvent evt){//GEN-FIRST:event_fileSaveAsActionPerformed
         // TODO add your handling code here:
         String name = JOptionPane.showInputDialog(null, "Enter a file name");
         while (name == null || name.equals("")){
             JOptionPane.showMessageDialog(null, "Can't enter empty name!");
             name = JOptionPane.showInputDialog(null, "Enter a file name");
         }
-        fileName = name + ".png";
-        File outputfile = new File(name + ".png");
-        ImageIO.write(image, "png", outputfile);
+        try {
+            fileName = name + ".png";
+            File outputfile = new File(name + ".png");
+            ImageIO.write(image, "png", outputfile);
+        }catch (IOException e){
+            JOptionPane.showMessageDialog(null,"Seems something wrong occurred when you " +
+                    "save your file, please try again!","Fail",JOptionPane.WARNING_MESSAGE);
+        }
+        JOptionPane.showMessageDialog(null,"You successfully saved your file " +
+                "in the current directory!","Success",JOptionPane.INFORMATION_MESSAGE);
 
     }//GEN-LAST:event_fileSaveAsActionPerformed
 
@@ -589,8 +599,6 @@ public class BoardClient extends javax.swing.JFrame {
     private void drawLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawLineActionPerformed
         // TODO add your handling code here:
         mode = DRAWLINE;
-        start.setLocation(0, 0);
-        end.setLocation(0, 0);
         System.out.println("mode is: "+mode);
         System.out.println("start: "+start+"end: "+end);
     }//GEN-LAST:event_drawLineActionPerformed
@@ -703,13 +711,10 @@ public class BoardClient extends javax.swing.JFrame {
                 //dispose();
                 try {
                     // Manager quit, close all clients board
-                    remoteBoard.closeAllBoard();
+                    remoteBoard.closeAllBoard(name);
                 } catch (IOException e) {
                     System.out.println("The application occurred an error when manager close the application");
-                }finally {
-                    System.exit(1);
                 }
-                //System.exit(0);
             }
         }else{
             // Client close the board
@@ -719,9 +724,14 @@ public class BoardClient extends javax.swing.JFrame {
                 try {
                     remoteBoard.exitBoard(name);
                 } catch (RemoteException e) {
+                    JOptionPane.showMessageDialog(null,
+                            "Seems you lost connection with RMI server, your board will close automatically!",
+                                "warning",JOptionPane.WARNING_MESSAGE);
+                    System.exit(1);
+                }finally {
+                    System.exit(0);
 
                 }
-                System.exit(0);
             }
 
         }
@@ -729,8 +739,6 @@ public class BoardClient extends javax.swing.JFrame {
 
     private void boardPanelKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_boardPanelKeyTyped
         // TODO add your handling code here:
-//        key = evt.getKeyChar();
-//        draw(g);
     }//GEN-LAST:event_boardPanelKeyTyped
 
     private void boardPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boardPanelMouseClicked
@@ -747,6 +755,7 @@ public class BoardClient extends javax.swing.JFrame {
 
     private void cursorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cursorButtonActionPerformed
         // TODO add your handling code here:
+        mode = NOTHING;
     }//GEN-LAST:event_cursorButtonActionPerformed
 
     private void fileOpenActionPerformed(java.awt.event.ActionEvent evt) throws IOException {//GEN-FIRST:event_fileOpenActionPerformed
