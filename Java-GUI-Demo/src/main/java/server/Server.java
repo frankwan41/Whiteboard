@@ -12,20 +12,20 @@ public class Server {
 
     public static void main(String[] args)
     {
-//        if(args.length != 2){
-//            JOptionPane.showMessageDialog(null,
-//                    "Arguments must consist of two components, IPAddress and Port. ", "WARNING",
-//                            JOptionPane.WARNING_MESSAGE);
-//            System.exit(1);
-//        }
-//        try {
-//            serverPort = Integer.parseInt(args[1]);
-//        }catch (NumberFormatException e){
-//            JOptionPane.showMessageDialog(null,"The port number must be correct integer format",
-//                    "WARNING",JOptionPane.WARNING_MESSAGE);
-//            System.exit(1);
-//        }
-        serverPort = 3200;
+        if(args.length != 2){
+            JOptionPane.showMessageDialog(null,
+                    "Arguments must consist of two components, IPAddress and Port. ", "WARNING",
+                            JOptionPane.WARNING_MESSAGE);
+            System.exit(1);
+        }
+        try {
+            serverPort = Integer.parseInt(args[1]);
+        }catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null,"The port number must be correct integer format",
+                    "WARNING",JOptionPane.WARNING_MESSAGE);
+            System.exit(1);
+        }
+        //serverPort = 3200;
 
         try{
             BoardServant board = new BoardServant();

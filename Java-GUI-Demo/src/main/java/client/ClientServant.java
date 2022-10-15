@@ -125,7 +125,6 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
                                 "out by the manager or the manager left the room", "Access denied!", JOptionPane.ERROR_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(null, "Sorry, you are not allowed to enter", "Access denied!", JOptionPane.ERROR_MESSAGE);
-                        //board.dispose();
                     }
                 }
                 System.exit(0);

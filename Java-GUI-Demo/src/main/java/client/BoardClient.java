@@ -25,7 +25,6 @@ public class BoardClient extends javax.swing.JFrame {
     private String mode;
     private Point start;
     private Point end;
-    private char key;
     private Point remoteStart;
     private Point remoteEnd;
     private String remoteMode;
@@ -40,7 +39,6 @@ public class BoardClient extends javax.swing.JFrame {
     private String name;
     private Color color;
     private Color remoteColor;
-    private ArrayList<String> clientNames;
     DefaultListModel chatModel;
     Graphics g;
     private boolean isManager;
@@ -645,10 +643,8 @@ public class BoardClient extends javax.swing.JFrame {
     private void boardPanelMouseReleased(java.awt.event.MouseEvent evt) throws RemoteException {//GEN-FIRST:event_boardPanelMouseReleased
         // TODO add your handling code here:
         end = evt.getPoint();
-        //g = boardPanel.getGraphics();
         g.setPaintMode();
         draw(g);
-        //drawImage(g);
         remoteBoard.draw(name, mode, start, end, color, textDraw);
         start.setLocation(0, 0);
         end.setLocation(0, 0);
@@ -658,7 +654,6 @@ public class BoardClient extends javax.swing.JFrame {
 
     private void boardPanelMouseDragged(java.awt.event.MouseEvent evt) throws RemoteException {//GEN-FIRST:event_boardPanelMouseDragged
         // TODO add your handling code here:
-        //g = boardPanel.getGraphics();
         if(mode.equals(FREEDRAW)){
             end.setLocation(evt.getX(), evt.getY());
             draw(g);
@@ -726,7 +721,6 @@ public class BoardClient extends javax.swing.JFrame {
                     "All user will be removed if you quit! Are you sure you want to exit?", "exit",
                                 JOptionPane.YES_NO_OPTION);
             if (option == JOptionPane.YES_OPTION) {
-                //dispose();
                 try {
                     // Manager quit, close all clients board
                     remoteBoard.closeAllBoard(name);

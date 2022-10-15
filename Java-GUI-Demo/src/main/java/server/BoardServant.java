@@ -97,11 +97,6 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
     }
 
     @Override
-    public ArrayList<IRemoteClient> getPeerList() throws RemoteException {
-        return manager.getClientList();
-    }
-
-    @Override
     public byte[] currentBoard() throws IOException {
         // get the current board state of the manager
         IRemoteClient the_manager = manager.getClientList().get(0);
@@ -234,9 +229,7 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
         String message = name + ": " + text;
         manager.addMessage(message);
         for(IRemoteClient client: manager.getClientList()){
-            //if(!client.getName().equals(name)){
-                client.addMessage(message);
-            //}
+            client.addMessage(message);
         }
     }
 

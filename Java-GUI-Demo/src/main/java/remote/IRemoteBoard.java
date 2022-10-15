@@ -25,9 +25,6 @@ public interface IRemoteBoard extends Remote{
     // client exit and broadcast to all clients and refresh clients list
     void exitBoard(String name) throws RemoteException;
 
-    // get peers list
-    ArrayList<IRemoteClient> getPeerList() throws RemoteException;
-
     // the new client should obtain the current state of the white board
     byte[] currentBoard() throws IOException;
 
