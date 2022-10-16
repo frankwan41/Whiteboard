@@ -39,13 +39,12 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
         }else{
             // client need to ask manager to join the white board
             try{
+                client.createBoard(this,name, false);
                 client.setClient(name);
                 access = manager.askJoin(name);
-
                 // check if access is granted
                 if(access) {
                     manager.addClient(client);
-                    client.createBoard(this,name, false);
                     // get current board
                     try {
                         client.updateOpenBoard(currentBoard());

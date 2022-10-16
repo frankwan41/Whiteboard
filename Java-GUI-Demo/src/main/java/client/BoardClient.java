@@ -787,7 +787,6 @@ public class BoardClient extends javax.swing.JFrame {
                 resetBoard();
                 boardPanel.getGraphics().drawImage(image, 0, 0, null);
                 g.drawImage(image, 0, 0, null);
-
                 ByteArrayOutputStream imageArray = new ByteArrayOutputStream();
                 ImageIO.write(image, "png", imageArray);
                 remoteBoard.openBoard(imageArray.toByteArray());
@@ -962,8 +961,10 @@ public class BoardClient extends javax.swing.JFrame {
     public void resetBoard(){
         boardPanel.getGraphics().setColor(Color.white);
         boardPanel.getGraphics().drawRect(0, 0, boardPanel.getWidth(), boardPanel.getHeight());
+        //repaint();
         g.setColor(Color.white);
         g.fillRect(0, 0, boardPanel.getWidth(), boardPanel.getHeight());
+        boardPanel.getGraphics().drawImage(image, 0, 0, null);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
