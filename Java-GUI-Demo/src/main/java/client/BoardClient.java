@@ -785,8 +785,9 @@ public class BoardClient extends javax.swing.JFrame {
                 // read image file and convert it to bytes and send to others
                 BufferedImage image = ImageIO.read(new File(fileDialog.getDirectory() + fileDialog.getFile()));
                 resetBoard();
-                g.drawImage(image, 0, 0, null);
                 boardPanel.getGraphics().drawImage(image, 0, 0, null);
+                g.drawImage(image, 0, 0, null);
+
                 ByteArrayOutputStream imageArray = new ByteArrayOutputStream();
                 ImageIO.write(image, "png", imageArray);
                 remoteBoard.openBoard(imageArray.toByteArray());
@@ -959,7 +960,8 @@ public class BoardClient extends javax.swing.JFrame {
      * remote method call to clear board
      */
     public void resetBoard(){
-        repaint();
+        boardPanel.getGraphics().setColor(Color.white);
+        boardPanel.getGraphics().drawRect(0, 0, boardPanel.getWidth(), boardPanel.getHeight());
         g.setColor(Color.white);
         g.fillRect(0, 0, boardPanel.getWidth(), boardPanel.getHeight());
     }
