@@ -12,6 +12,8 @@ public class Server {
 
     public static void main(String[] args)
     {
+
+        // The input arguments must be strictly the correct format
         if(args.length != 2){
             JOptionPane.showMessageDialog(null,
                     "Arguments must consist of two components, IPAddress and Port. ", "WARNING",
@@ -25,7 +27,6 @@ public class Server {
                     "WARNING",JOptionPane.WARNING_MESSAGE);
             System.exit(1);
         }
-        //serverPort = 3200;
 
         try{
             BoardServant board = new BoardServant();

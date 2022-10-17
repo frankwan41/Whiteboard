@@ -4,6 +4,7 @@ import org.junit.experimental.theories.Theories;
 import remote.IRemoteBoard;
 import remote.IRemoteClient;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.rmi.*;
@@ -26,7 +27,7 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
     }
 
     /**
-     * client joins the board
+     * client joins the board, handle difference between manager join and user join
      * @param client client remote class
      */
     @Override
@@ -49,16 +50,16 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
                     try {
                         client.updateOpenBoard(currentBoard());
                     }catch (IOException e){
-                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(null,"Seems the board is missing!");
                         System.exit(1);
                     }
                     System.out.println("Client "+name+" join the board!");
                 }else {
-                    client.closeBoard(access);
+                    client.closeBoard(false);
                     return;
                 }
             }catch (Exception e){
-                e.printStackTrace();
+                JOptionPane.showMessageDialog(null,"The board connection lost, please try again!");
             }
         }
 
@@ -76,6 +77,12 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
 
     }
 
+    /***
+     *
+     * @param name
+     * @throws RemoteException
+     * Client exit the board (not include manager)
+     */
     @Override
     public void exitBoard(String name) throws RemoteException {
         for(IRemoteClient c: manager.getClientList()){
@@ -95,6 +102,11 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
 
     }
 
+    /***
+     * Get the manager's current board image
+     * @return
+     * @throws IOException
+     */
     @Override
     public byte[] currentBoard() throws IOException {
         // get the current board state of the manager
@@ -104,6 +116,11 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
         return currentState;
     }
 
+    /***
+     * Only manager can call
+     * clear the board to blank
+     * @throws RemoteException
+     */
     @Override
     public void newBoard() throws RemoteException {
         for (IRemoteClient c: manager.getClientList()){
@@ -114,6 +131,11 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
 
     }
 
+    /***
+     * Manager can open an existing painted image
+     * @param boardState
+     * @throws IOException
+     */
     @Override
     public void openBoard(byte[] boardState) throws IOException {
         for (IRemoteClient c: manager.getClientList()){
@@ -123,6 +145,11 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
         }
     }
 
+    /***
+     * Manager can close the board, all the clients will be removed
+     * @param managerName
+     * @throws RemoteException
+     */
     @Override
     public void closeAllBoard(String managerName) throws RemoteException {
 
@@ -139,6 +166,11 @@ public class BoardServant extends UnicastRemoteObject implements IRemoteBoard {
 
     }
 
+    /***
+     * Manager can kick client
+     * @param userName
+     * @throws RemoteException
+     */
     @Override
     public void kickUser(String userName) throws RemoteException {
         for (IRemoteClient c: manager.getClientList()){

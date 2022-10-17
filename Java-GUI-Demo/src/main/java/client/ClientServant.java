@@ -38,7 +38,8 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
         /* Create and display the form */
         board = new BoardClient(remoteBoard, name, isManager);
         board.setVisible(true);
-        board.setSize(700,500);
+        board.setSize(710,500);
+        board.setResizable(false);
     }
 
     /**
@@ -114,6 +115,12 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
         board.updateBoard(bytes);
     }
 
+    /***
+     * If the client's join request is rejected by manager or the client is kicked out by manager
+     * the client's board will be closed
+     * @param access
+     * @throws RemoteException
+     */
     @Override
     public void closeBoard(boolean access) throws RemoteException {
         Thread t = new Thread(new Runnable() {
@@ -156,7 +163,6 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                System.out.println(name);
                 board.remoteDraw(mode, start, end, color, text);
             }
         });

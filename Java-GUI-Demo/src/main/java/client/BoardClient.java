@@ -310,7 +310,6 @@ public class BoardClient extends javax.swing.JFrame {
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(null,"The file you want to " +
                             "open does not exist!","no file",JOptionPane.WARNING_MESSAGE);
-//                    throw new RuntimeException(e);
                 }
             }
         });
@@ -425,11 +424,6 @@ public class BoardClient extends javax.swing.JFrame {
 
         textMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/text.png"))); // NOI18N
         textMenu.setText("Text");
-        textMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textMenuActionPerformed(evt);
-            }
-        });
 
         modeGroup.add(drawText);
         drawText.setSelected(false);
@@ -447,9 +441,6 @@ public class BoardClient extends javax.swing.JFrame {
 
         freeDraw.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/drawing.png"))); // NOI18N
         freeDraw.setText("Drawing");
-//        freeDraw.setMaximumSize(new java.awt.Dimension(3200, 3200));
-//        freeDraw.setMinimumSize(new java.awt.Dimension(85, 22));
-//        freeDraw.setPreferredSize(new java.awt.Dimension(85, 22));
 
         modeGroup.add(freeDrawButton);
         freeDrawButton.setText("Free Draw");
@@ -482,6 +473,7 @@ public class BoardClient extends javax.swing.JFrame {
         currentTool.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         currentTool.setText("current tool");
         currentTool.setOpaque(true);
+        currentTool.setIcon(cursorMenu.getIcon());
         menuBar.add(currentTool);
 
         currentColor.setBackground(java.awt.Color.lightGray);
@@ -537,6 +529,12 @@ public class BoardClient extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /***
+     * If the file already exist, the panel image will be saved to the file
+     * If the file does not exit, the user need to give a name for the file
+     * @param evt
+     * @throws NullPointerException
+     */
     private void fileSaveActionPerformed(java.awt.event.ActionEvent evt) throws NullPointerException{//GEN-FIRST:event_fileSaveActionPerformed
         // TODO add your handling code here:
         if(fileName == null){
@@ -561,6 +559,11 @@ public class BoardClient extends javax.swing.JFrame {
                 "in the current directory!","Success",JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_fileSaveActionPerformed
 
+    /***
+     * The user need to provide a file name, and the file will be saved to current directory
+     * @param evt
+     * @throws NullPointerException
+     */
     private void fileSaveAsActionPerformed(java.awt.event.ActionEvent evt)throws NullPointerException{//GEN-FIRST:event_fileSaveAsActionPerformed
         // TODO add your handling code here:
         String name = JOptionPane.showInputDialog(null, "Enter a file name");
@@ -583,13 +586,16 @@ public class BoardClient extends javax.swing.JFrame {
 
     }//GEN-LAST:event_fileSaveAsActionPerformed
 
+    /***
+     * The file close is same as manager quit, all clients will be removed
+     * @param evt
+     */
     private void fileCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileCloseActionPerformed
         // TODO add your handling code here:
         int option = JOptionPane.showConfirmDialog(null, "You are manager! " +
                         "All user will be removed if you close the board! Are you sure you want to exit?", "exit",
                 JOptionPane.YES_NO_OPTION);
         if (option == JOptionPane.YES_OPTION) {
-            //dispose();
             try {
                 // Manager quit, close all clients board
                 remoteBoard.closeAllBoard(name);
@@ -600,6 +606,11 @@ public class BoardClient extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_fileCloseActionPerformed
 
+    /***
+     * The manager create a new blank board
+     * @param evt
+     * @throws IOException
+     */
     private void newBoardActionPerformed(java.awt.event.ActionEvent evt) throws IOException {//GEN-FIRST:event_newBoardActionPerformed
         // TODO add your handling code here:
         int option = JOptionPane.showConfirmDialog(null, "Have you saved your board?", "Confirm", JOptionPane.YES_NO_OPTION);
@@ -619,11 +630,13 @@ public class BoardClient extends javax.swing.JFrame {
     private void drawLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawLineActionPerformed
         // TODO add your handling code here:
         mode = DRAWLINE;
+        currentTool.setIcon(drawLine.getIcon());
     }//GEN-LAST:event_drawLineActionPerformed
 
     private void drawCirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawCirActionPerformed
         // TODO add your handling code here:
         mode = DRAWCIRCLE;
+        currentTool.setIcon(drawCir.getIcon());
     }//GEN-LAST:event_drawCirActionPerformed
 
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
@@ -679,17 +692,15 @@ public class BoardClient extends javax.swing.JFrame {
     private void drawRectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawRectActionPerformed
         // TODO add your handling code here:
         mode = DRAWREC;
+        currentTool.setIcon(drawRect.getIcon());
     }//GEN-LAST:event_drawRectActionPerformed
 
     private void drawTriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawTriActionPerformed
         // TODO add your handling code here:
         mode = DRAWTRI;
+        currentTool.setIcon(drawTri.getIcon());
     }//GEN-LAST:event_drawTriActionPerformed
 
-    private void textMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textMenuActionPerformed
-        // TODO add your handling code here:
-        mode = DRAWTEXT;
-    }//GEN-LAST:event_textMenuActionPerformed
 
     private void userListMouseClicked(java.awt.event.MouseEvent evt) throws RemoteException {//GEN-FIRST:event_userListMouseClicked
         // TODO add your handling code here:
@@ -764,13 +775,21 @@ public class BoardClient extends javax.swing.JFrame {
     private void freeDrawButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_freeDrawButtonActionPerformed
         // TODO add your handling code here:
         mode = FREEDRAW;
+        currentTool.setIcon(freeDraw.getIcon());
     }//GEN-LAST:event_freeDrawButtonActionPerformed
 
     private void cursorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cursorButtonActionPerformed
         // TODO add your handling code here:
         mode = NOTHING;
+        currentTool.setIcon(cursorButton.getIcon());
     }//GEN-LAST:event_cursorButtonActionPerformed
 
+    /***
+     * Open an existing image file, the board will obtain the image
+     * If the user open a non image file, a warning will display
+     * @param evt
+     * @throws IOException
+     */
     private void fileOpenActionPerformed(java.awt.event.ActionEvent evt) throws IOException {//GEN-FIRST:event_fileOpenActionPerformed
         // TODO add your handling code here:
         FileDialog fileDialog = new FileDialog(this, "open an image", FileDialog.LOAD);
@@ -798,9 +817,11 @@ public class BoardClient extends javax.swing.JFrame {
     private void drawTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawTextActionPerformed
         // TODO add your handling code here:
         mode = DRAWTEXT;
+        currentTool.setIcon(drawText.getIcon());
     }//GEN-LAST:event_drawTextActionPerformed
 
     /**
+     * Depend on the tool the user select, the draw action will perform differently
      * paint the whiteboard
      * @param g graphics
      */

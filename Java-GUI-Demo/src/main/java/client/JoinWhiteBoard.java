@@ -38,6 +38,7 @@ public class JoinWhiteBoard {
             }else{
                 // create board and check if client is a manager
                 if(!remoteBoard.isEmpty()){
+                    // Log message tell client wait for manager's permission
                     Thread t = new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -46,8 +47,6 @@ public class JoinWhiteBoard {
                         }
                     });
                     t.start();
-//                    JOptionPane.showMessageDialog(null,"Please wait the manager to " +
-//                                    "grant you access!","Wait",JOptionPane.INFORMATION_MESSAGE);
                     remoteBoard.joinBoard(client, clientName);
                 }else{
                     JOptionPane.showMessageDialog(null,
