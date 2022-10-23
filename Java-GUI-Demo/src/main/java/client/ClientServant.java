@@ -203,4 +203,8 @@ public class ClientServant extends UnicastRemoteObject implements IRemoteClient 
         t.start();
 
     }
+
+    public void setV(boolean access){
+        board.setVisible(access);
+    }
 }

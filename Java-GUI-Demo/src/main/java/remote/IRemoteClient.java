@@ -57,4 +57,6 @@ public interface IRemoteClient extends Remote{
     // notify every client that a client is kicked out
     void notification(String text) throws RemoteException;
 
+    void setV(boolean access)throws RemoteException;
+
 }

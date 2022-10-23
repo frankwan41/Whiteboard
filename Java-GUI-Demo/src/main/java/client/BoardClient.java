@@ -864,22 +864,24 @@ public class BoardClient extends javax.swing.JFrame {
         remoteStart.setLocation(start);
         remoteEnd.setLocation(end);
         remoteTextDraw = text;
-        g.setColor(remoteColor);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setStroke(new BasicStroke(2));
+        g2d.setColor(remoteColor);
         if(remoteMode.equals(FREEDRAW)){
-            g.drawLine(remoteStart.x, remoteStart.y, remoteEnd.x, remoteEnd.y);
+            g2d.drawLine(remoteStart.x, remoteStart.y, remoteEnd.x, remoteEnd.y);
         }else if(remoteMode.equals(DRAWLINE)){
-            g.drawLine(remoteStart.x, remoteStart.y, remoteEnd.x, remoteEnd.y);
+            g2d.drawLine(remoteStart.x, remoteStart.y, remoteEnd.x, remoteEnd.y);
         }else if(remoteMode.equals(DRAWREC)){
-            g.drawRect(remoteStartPoint().x, remoteStartPoint().y, Math.abs(remoteStart.x - remoteEnd.x), Math.abs(remoteStart.y - remoteEnd.y));
+            g2d.drawRect(remoteStartPoint().x, remoteStartPoint().y, Math.abs(remoteStart.x - remoteEnd.x), Math.abs(remoteStart.y - remoteEnd.y));
         }else if(remoteMode.equals(DRAWCIRCLE)){
-            g.drawOval(remoteStartPoint().x, remoteStartPoint().y, Math.abs(remoteStart.x - remoteEnd.x), Math.abs(remoteStart.y - remoteEnd.y));
+            g2d.drawOval(remoteStartPoint().x, remoteStartPoint().y, Math.abs(remoteStart.x - remoteEnd.x), Math.abs(remoteStart.y - remoteEnd.y));
         }else if(remoteMode.equals(DRAWTRI)) {
             int[] xPoints = {remoteStart.x, remoteEnd.x, Math.min(remoteStart.x, remoteEnd.x) - Math.abs(remoteStart.x - remoteEnd.x)};
             int[] yPoints = {remoteStart.y, remoteEnd.y, remoteEnd.y};
-            g.drawPolygon(xPoints, yPoints, 3);
+            g2d.drawPolygon(xPoints, yPoints, 3);
         }else if(mode.equals(DRAWTEXT)){
             if(remoteTextDraw != null){
-                g.drawString(remoteTextDraw, start.x, start.y);
+                g2d.drawString(remoteTextDraw, start.x, start.y);
             }
         }
         boardPanel.getGraphics().drawImage(image, 0, 0, null);
